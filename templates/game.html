@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="game-display">
+    <div class="player-display">
+        {% for player in players %}
+
+        <ul>
+            <li><strong>Name</strong>: {{ player["name"] }}</li>
+            <li><strong>Coins</strong>: {{ player["coins"] }}</li>
+            <li><strong>King</strong>: {{ player["king"] }}</li>
+            <li><strong>Protected</strong>: {{ player["protected"] }}</li>
+            <li><strong>Score</strong>: {{ player["score"] }}</li>
+        </ul>
+        <div class="cards-display">
+            {% for pic in pics %}
+            <img src="/static/images/characters/{{pic}}" alt="{{ pic }}" class="cards-img"/>
+            {% endfor %}
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+body {
+    margin: 10px;
+    font-family: Arial, Geneva, Helvetica, sans-serif;
+}
+h3 {
+    color: purple;
+}
+.game-display {
+    display: flex;
+    flex-direction: column;
+    /*height: 300px; /* Or whatever */
+}
+.player-display {
+    flex-direction: row;
+    background-color: green;
+}
+.cards-display {
+    flex-direction: row;
+    height: 300px; /* Or whatever */
+    background-color: hotpink;
+}
+.cards-img {
+    width: 200px;  /* Or whatever */ /* cards have aspect ration of 3:2 -> +- 9 cm height and +- 6 cm width */
+    height: 300px; /* Or whatever */
+    margin: auto;  /* Magic! */
+    border-radius: 10px;
+}
