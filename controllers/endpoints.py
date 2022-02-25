@@ -65,3 +65,11 @@ def get_player_cards(base_url, game_uuid, player_uuid):
     log_response(response)
 
     return response
+
+
+def get_player_buildings(base_url, game_uuid, player_uuid):
+    response = requests.get(url=base_url + "/game/" + game_uuid + "/players/" + player_uuid + "/buildings")
+
+    log_response(response)
+
+    return response

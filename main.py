@@ -71,6 +71,29 @@ def game(game_uuid):
 
             pprint(players)
 
+            for player in players:
+                response_player_characters = endpoints.get_player_characters(base_url, game_uuid, player["uuid"])
+
+                if response_player_characters.status_code == 200:
+                    characters = response_player_characters.json()
+
+                    pprint(characters)
+
+                    player["characters"] = characters
+
+                    player["character_pics"] = list(map(lambda x: x["name"].lower() + ".jpg", characters))
+
+                response_player_buildings = endpoints.get_player_buildings(base_url, game_uuid, player["uuid"])
+
+                if response_player_buildings.status_code == 200:
+                    buildings = response_player_buildings.json()
+
+                    pprint(buildings)
+
+                    player["buildings"] = buildings
+
+                    player["building_pics"] = list(map(lambda x: x["name"].lower() + ".jpg", buildings))
+
     query = {
         "sort_order": "asc",
         "order_by": "order"

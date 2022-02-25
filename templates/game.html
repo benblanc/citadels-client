@@ -7,24 +7,32 @@
 </head>
 <body>
 <div class="game-display">
-    <div class="player-display">
-        {% for player in players %}
+    {% for player in players %}
 
-        <ul>
-            <li><strong>Name</strong>: {{ player["name"] }}</li>
-            <li><strong>Coins</strong>: {{ player["coins"] }}</li>
-            <li><strong>King</strong>: {{ player["king"] }}</li>
-            <li><strong>Protected</strong>: {{ player["protected"] }}</li>
-            <li><strong>Score</strong>: {{ player["score"] }}</li>
-        </ul>
+    <div class="player-display">
+
+        <div class="player-display-properties">
+            <p><strong>Name</strong>: {{ player["name"] }}</p>
+            <p><strong>Coins</strong>: {{ player["coins"] }}</p>
+            <p><strong>King</strong>: {{ player["king"] }}</p>
+            <p><strong>Protected</strong>: {{ player["protected"] }}</p>
+            <p><strong>Score</strong>: {{ player["score"] }}</p>
+        </div>
+
+        <div class="vertical-line"></div>
+
         <div class="cards-display">
             {% for pic in pics %}
             <img src="/static/images/characters/{{pic}}" alt="{{ pic }}" class="cards-img"/>
             {% endfor %}
         </div>
 
-        {% endfor %}
+        <div class="vertical"></div>
     </div>
+
+
+    {% endfor %}
+
 </div>
 </body>
 </html>
