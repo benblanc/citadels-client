@@ -151,6 +151,11 @@ def game_player(game_uuid, player_uuid):
 
         pprint(game)
 
+        response_get_characters = endpoints.get_characters(base_url)
+
+        if response_get_characters.status_code == 200:
+            characters_full_info = response_get_characters.json()
+
         response_game_removed_characters = endpoints.get_removed_characters(base_url, game_uuid)
 
         if response_game_removed_characters.status_code == 200:
@@ -163,6 +168,12 @@ def game_player(game_uuid, player_uuid):
             open_removed_characters = list(filter(lambda character: character["open"] == True, removed_characters))
             closed_removed_characters = list(filter(lambda character: character["open"] == False, removed_characters))
 
+            if characters_full_info:  # check if we have the full info on each character in the game
+                for character in open_removed_characters:
+                    character["order"] = list(filter(lambda _character: _character["name"] == character["name"], characters_full_info))[0]["order"]
+
+                open_removed_characters = sorted(open_removed_characters, key=lambda character: character["order"], reverse=False)
+
             game["removed_character_pics"] = ["_back.jpg"] * len(closed_removed_characters)
 
             game["removed_character_pics"] += list(map(lambda x: x["name"].lower() + ".jpg", open_removed_characters))
@@ -174,6 +185,10 @@ def game_player(game_uuid, player_uuid):
 
             pprint(players)
 
+            player_seat = list(filter(lambda player: player["uuid"] == player_uuid, players))[0]["seat"]
+
+            players = players[player_seat:] + players[:player_seat]  # update order of player in array so you are first, meaning you will be on top of the game UI
+
             for player in players:
                 response_player_characters = endpoints.get_player_characters(base_url, game_uuid, player["uuid"])
 
@@ -184,10 +199,15 @@ def game_player(game_uuid, player_uuid):
 
                     player["characters"] = characters
 
-                    player["character_pics"] = ["_back.jpg"] * len(characters)
+                    player["character_pics"] = []
 
-                    if player["uuid"] == player_uuid:
-                        player["character_pics"] = list(map(lambda x: x["name"].lower() + ".jpg", characters))
+                    for character in characters:
+                        file_name = "_back.jpg"
+
+                        if player["uuid"] == player_uuid or character["open"]:
+                            file_name = character["name"].lower() + ".jpg"
+
+                        player["character_pics"].append(file_name)
 
                 response_player_cards = endpoints.get_player_cards(base_url, game_uuid, player["uuid"])
 

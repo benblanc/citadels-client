@@ -27,11 +27,12 @@
     <hr>
     <div class="player-display">
         <div class="player-display-properties">
+            <p><strong>Seat</strong>: {{ player["seat"] }}</p>
+            <p><strong>Score</strong>: {{ player["score"] }}</p>
             <p><strong>Name</strong>: {{ player["name"] }}</p>
             <p><strong>Coins</strong>: {{ player["coins"] }}</p>
             <p><strong>King</strong>: {{ player["king"] }}</p>
             <p><strong>Protected</strong>: {{ player["protected"] }}</p>
-            <p><strong>Score</strong>: {{ player["score"] }}</p>
             {% if player["uuid"] == player_uuid %}
             <div class="dropdown">
                 <button class="dropbtn">Actions</button>

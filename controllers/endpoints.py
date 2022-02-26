@@ -81,3 +81,16 @@ def get_removed_characters(base_url, game_uuid):
     log_response(response)
 
     return response
+
+
+def get_characters(base_url):
+    query_params = {
+        "sort_order": "asc",
+        "order_by": "order"
+    }
+
+    response = requests.get(url=base_url + "/cards/characters", params=query_params)
+
+    log_response(response)
+
+    return response
