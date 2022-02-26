@@ -6,33 +6,71 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<div class="game-display">
+<div>
+    <div class="game-display">
+        <div class="game-display-properties">
+            <p><strong>Round</strong>: {{ game["round"] }}</p>
+            <p><strong>State</strong>: {{ game["state"] }}</p>
+            <p><strong>Character turn</strong>: {{ game["character_turn"] }}</p>
+        </div>
+
+        <div class="vertical-line"></div>
+
+        <div class="cards-display">
+            {% for pic in game["removed_character_pics"] %}
+            <img src="/static/images/characters/{{pic}}" alt="{{ pic }}" class="cards-img" title="{{ pic }}"/>
+            {% endfor %}
+        </div>
+    </div>
+
     {% for player in players %}
-
+    <hr>
     <div class="player-display">
-
         <div class="player-display-properties">
             <p><strong>Name</strong>: {{ player["name"] }}</p>
             <p><strong>Coins</strong>: {{ player["coins"] }}</p>
             <p><strong>King</strong>: {{ player["king"] }}</p>
             <p><strong>Protected</strong>: {{ player["protected"] }}</p>
             <p><strong>Score</strong>: {{ player["score"] }}</p>
+            {% if player["uuid"] == player_uuid %}
+            <div class="dropdown">
+                <button class="dropbtn">Actions</button>
+                <div class="dropdown-content">
+                    <a href="#">Link 1</a>
+                    <a href="#">Link 2</a>
+                    <a href="#">Link 3</a>
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <div class="vertical-line"></div>
 
         <div class="cards-display">
-            {% for pic in pics %}
-            <img src="/static/images/characters/{{pic}}" alt="{{ pic }}" class="cards-img"/>
+            {% for pic in player["character_pics"] %}
+            <img src="/static/images/characters/{{pic}}" alt="{{ pic }}" class="cards-img" title="{{ pic }}"/>
             {% endfor %}
         </div>
 
+        <div class="vertical-line"></div>
+
+        <div class="cards-display">
+            {% for pic in player["card_pics"] %}
+            <img src="/static/images/districts/{{pic}}" alt="{{ pic }}" class="cards-img" title="{{ pic }}"/>
+            {% endfor %}
+        </div>
+
+        <div class="vertical-line"></div>
+
+        <div class="cards-display">
+            {% for pic in player["building_pics"] %}
+            <img src="/static/images/districts/{{pic}}" alt="{{ pic }}" class="cards-img" title="{{ pic }}"/>
+            {% endfor %}
+        </div>
         <div class="vertical"></div>
     </div>
 
-
     {% endfor %}
-
 </div>
 </body>
 </html>

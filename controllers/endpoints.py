@@ -73,3 +73,11 @@ def get_player_buildings(base_url, game_uuid, player_uuid):
     log_response(response)
 
     return response
+
+
+def get_removed_characters(base_url, game_uuid):
+    response = requests.get(url=base_url + "/game/" + game_uuid + "/removed_characters")
+
+    log_response(response)
+
+    return response
