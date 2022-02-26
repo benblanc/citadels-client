@@ -11,8 +11,54 @@ app = Flask(__name__)
 
 # home route
 @app.route("/")
-def hello():
-    return render_template('index.html', name='Jane', gender='Female')
+def index():
+    base_url = "http://127.0.0.1:8080"
+
+    games = []
+
+    response_games = endpoints.get_games(base_url)
+
+    if response_games.status_code == 200:
+        games = response_games.json()
+
+    pprint(games)
+
+    return render_template('index.html', games=games)
+
+
+@app.route("/join_game", methods=['POST'])
+def join_game():
+    # game_uuid = request.form["game-to-join"]
+    game_uuid = request.values.get('game-to-join')
+    player_name = request.values.get('player-name')
+
+    print("game_uuid: ", game_uuid)
+    print("player_name: ", player_name)
+
+    base_url = "http://127.0.0.1:8080"
+
+    if request.method == 'POST':
+        response_join_game = endpoints.join_game(base_url, game_uuid, player_name)
+
+        if response_join_game.status_code == 201:
+            player_uuid = response_join_game.json()
+            print("player_uuid: ", player_uuid)
+
+    response_game = endpoints.get_game(base_url, game_uuid)
+
+    if response_game.status_code == 200:
+        game = response_game.json()
+
+        pprint(game)
+
+    response_players = endpoints.get_players(base_url, game_uuid)
+
+    if response_players.status_code == 200:
+        players = response_players.json()
+
+        pprint(players)
+
+    return render_template("lobby.html")
 
 
 # serving form web page

@@ -27,8 +27,28 @@ def log_response(response):
         print("=" * 100)
 
 
+def get_games(base_url):
+    response = requests.get(url=base_url + "/game")
+
+    log_response(response)
+
+    return response
+
+
 def get_game(base_url, game_uuid):
     response = requests.get(url=base_url + "/game/" + game_uuid)
+
+    log_response(response)
+
+    return response
+
+
+def join_game(base_url, game_uuid, name):
+    payload = {
+        "name": name
+    }
+
+    response = requests.post(url=base_url + "/game/" + game_uuid + "/action.join", json=payload)
 
     log_response(response)
 
