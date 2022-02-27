@@ -37,11 +37,11 @@
     </div>
     <div class="home-game-form">
         <h2>Create a game</h2>
-        <form action="" method="post">
+        <form action="{{ url_for('create_game') }}" method="post">
             <p>Player name:</p>
             <input type="text" name="player-name" id="create-game-player-name">
             <p>Game description:</p>
-            <textarea></textarea><br>
+            <textarea name="game-description"></textarea><br>
             <div class="home-button">
                 <input type="submit" value="Submit" class="home-buttons">
             </div>

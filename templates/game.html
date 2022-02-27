@@ -12,6 +12,14 @@
             <p><strong>Round</strong>: {{ game["round"] }}</p>
             <p><strong>State</strong>: {{ game["state"] }}</p>
             <p><strong>Character turn</strong>: {{ game["character_turn"] }}</p>
+            {% if host %}
+            <div class="home-button">
+                <input type="submit" name="start" value="Start" class="game-buttons"/>
+            </div>
+            {% endif %}
+            {% if not host and game["state"] == "created" %}
+            <p>Waiting for other players to join...</p>
+            {% endif %}
         </div>
 
         <div class="vertical-line"></div>
@@ -33,7 +41,7 @@
             <p><strong>Coins</strong>: {{ player["coins"] }}</p>
             <p><strong>King</strong>: {{ player["king"] }}</p>
             <p><strong>Protected</strong>: {{ player["protected"] }}</p>
-            {% if player["uuid"] == player_uuid %}
+            {% if player["uuid"] == player_uuid and game["state"] == "selection_phase" or game["state"] == "turn_phase" %}
             <div class="dropdown">
                 <button class="dropbtn">Actions</button>
                 <div class="dropdown-content">
