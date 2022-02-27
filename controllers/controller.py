@@ -24,7 +24,10 @@ def join_game_run():
     print("game_uuid: ", game_uuid)
     print("player_name: ", player_name)
 
-    if not validate_uuid(game_uuid) or not validate_name(player_name):
+    if not game_uuid or not player_name:  # check if not none
+        return redirect("/")
+
+    if not validate_uuid(game_uuid) or not validate_name(player_name):  # check if invalid input
         return redirect("/")
 
     if request.method == 'POST':
@@ -51,7 +54,10 @@ def create_game_run():
     print("player_name: ", player_name)
     print("game_description: ", game_description)
 
-    if not validate_name(player_name) or not validate_description(game_description):
+    if not player_name or not game_description:  # check if not none
+        return redirect("/")
+
+    if not validate_name(player_name) or not validate_description(game_description):  # check if invalid input
         return redirect("/")
 
     if request.method == 'POST':

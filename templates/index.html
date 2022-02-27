@@ -6,46 +6,48 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<div class="home-display">
-    <div class="home-games-overview">
-        <form action="{{ url_for('join_game') }}" method="post" class="home-join-game">
-            <h2>Join a game</h2>
-            <div class="home-text-input">
-                <label>Player name:</label>
-                <input type="text" name="player-name" id="join-game-player-name">
-            </div>
-            <table border="1">
-                <tr>
-                    <th>Game to join</th>
-                    <th>Description</th>
-                    <th>State</th>
-                    <th>Players</th>
-                </tr>
-                {% for game in games %}
-                <tr>
-                    <td><input type="checkbox" name="game-to-join" value="{{ game['uuid'] }}"></td>
-                    <td>{{ game["description"] }}</td>
-                    <td>{{ game["state"] }}</td>
-                    <td>{{ game["amount_players"] }}/7</td>
-                </tr>
-                {% endfor %}
-            </table>
-            <div class="home-button">
-                <input type="submit" name="join" value="Join" class="home-buttons"/>
-            </div>
-        </form>
-    </div>
-    <div class="home-game-form">
-        <h2>Create a game</h2>
-        <form action="{{ url_for('create_game') }}" method="post">
-            <p>Player name:</p>
-            <input type="text" name="player-name" id="create-game-player-name">
-            <p>Game description:</p>
-            <textarea name="game-description"></textarea><br>
-            <div class="home-button">
-                <input type="submit" value="Submit" class="home-buttons">
-            </div>
-        </form>
+<div class="home-overview">
+    <div class="home-display">
+        <div class="home-games-overview">
+            <form action="{{ url_for('join_game') }}" method="post" class="home-join-game">
+                <h2>Join a game</h2>
+                <div class="home-text-input">
+                    <label>Player name:</label>
+                    <input type="text" name="player-name" id="join-game-player-name">
+                </div>
+                <table border="1">
+                    <tr>
+                        <th>Game to join</th>
+                        <th>Description</th>
+                        <th>State</th>
+                        <th>Players</th>
+                    </tr>
+                    {% for game in games %}
+                    <tr>
+                        <td><input type="checkbox" name="game-to-join" value="{{ game['uuid'] }}"></td>
+                        <td>{{ game["description"] }}</td>
+                        <td>{{ game["state"] }}</td>
+                        <td>{{ game["amount_players"] }}/7</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <div class="home-button">
+                    <input type="submit" name="join" value="Join" class="home-buttons"/>
+                </div>
+            </form>
+        </div>
+        <div class="home-game-form">
+            <h2>Create a game</h2>
+            <form action="{{ url_for('create_game') }}" method="post">
+                <p>Player name:</p>
+                <input type="text" name="player-name" id="create-game-player-name">
+                <p>Game description:</p>
+                <textarea name="game-description"></textarea><br>
+                <div class="home-button">
+                    <input type="submit" value="Submit" class="home-buttons">
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 </body>
