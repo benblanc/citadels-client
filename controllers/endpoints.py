@@ -1,12 +1,12 @@
 import requests, json
 
-from pprint import pprint
+from utils.helpers import *
 
-LOGGING_REQUESTS = False
+from pprint import pprint
 
 
 def log_response(response):
-    if LOGGING_REQUESTS:
+    if get_logging_requests():
         print("request url: ", response.request.url)
         print("request body:")
 
@@ -27,69 +27,110 @@ def log_response(response):
         print("=" * 100)
 
 
-def get_game(base_url, game_uuid):
-    response = requests.get(url=base_url + "/game/" + game_uuid)
+def get_games():
+    response = requests.get(url=get_citadels_api_base_url() + "/game")
 
     log_response(response)
 
     return response
 
 
-def get_players(base_url, game_uuid):
-    response = requests.get(url=base_url + "/game/" + game_uuid + "/players")
+def get_game(game_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid)
 
     log_response(response)
 
     return response
 
 
-def get_player(base_url, game_uuid, player_uuid):
-    response = requests.get(url=base_url + "/game/" + game_uuid + "/players/" + player_uuid)
+def create_game(name, description):
+    payload = {
+        "name": name,
+        "description": description
+    }
+
+    response = requests.post(url=get_citadels_api_base_url() + "/game/action.create", json=payload)
 
     log_response(response)
 
     return response
 
 
-def get_player_characters(base_url, game_uuid, player_uuid):
-    response = requests.get(url=base_url + "/game/" + game_uuid + "/players/" + player_uuid + "/characters")
+def join_game(game_uuid, name):
+    payload = {
+        "name": name
+    }
+
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/action.join", json=payload)
 
     log_response(response)
 
     return response
 
 
-def get_player_cards(base_url, game_uuid, player_uuid):
-    response = requests.get(url=base_url + "/game/" + game_uuid + "/players/" + player_uuid + "/cards")
+def start_game(game_uuid, player_uuid):
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.start")
 
     log_response(response)
 
     return response
 
 
-def get_player_buildings(base_url, game_uuid, player_uuid):
-    response = requests.get(url=base_url + "/game/" + game_uuid + "/players/" + player_uuid + "/buildings")
+def get_players(game_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players")
 
     log_response(response)
 
     return response
 
 
-def get_removed_characters(base_url, game_uuid):
-    response = requests.get(url=base_url + "/game/" + game_uuid + "/removed_characters")
+def get_player(game_uuid, player_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid)
 
     log_response(response)
 
     return response
 
 
-def get_characters(base_url):
+def get_player_characters(game_uuid, player_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/characters")
+
+    log_response(response)
+
+    return response
+
+
+def get_player_cards(game_uuid, player_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/cards")
+
+    log_response(response)
+
+    return response
+
+
+def get_player_buildings(game_uuid, player_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/buildings")
+
+    log_response(response)
+
+    return response
+
+
+def get_removed_characters(game_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/removed_characters")
+
+    log_response(response)
+
+    return response
+
+
+def get_characters():
     query_params = {
         "sort_order": "asc",
         "order_by": "order"
     }
 
-    response = requests.get(url=base_url + "/cards/characters", params=query_params)
+    response = requests.get(url=get_citadels_api_base_url() + "/cards/characters", params=query_params)
 
     log_response(response)
 
