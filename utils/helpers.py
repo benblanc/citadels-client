@@ -13,12 +13,21 @@ def create_environment_variables(file_path):
         os.environ[key.upper()] = value
 
 
+def string_to_bool(text):
+    status = False
+
+    if text.lower() == "true":
+        status = True
+
+    return status
+
+
 def get_citadels_api_base_url():
     return os.environ["CITADELS_API_BASE_URL"]
 
 
 def get_logging_requests():
-    return bool(os.environ["LOGGING_REQUESTS"])
+    return string_to_bool(os.environ["LOGGING_REQUESTS"])
 
 
 def is_request_successful(status_code):

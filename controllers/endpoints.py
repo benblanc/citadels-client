@@ -68,6 +68,14 @@ def join_game(game_uuid, name):
     return response
 
 
+def start_game(game_uuid, player_uuid):
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.start")
+
+    log_response(response)
+
+    return response
+
+
 def get_players(game_uuid):
     response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players")
 
