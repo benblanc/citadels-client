@@ -27,7 +27,7 @@ def join_game_run():
     if not game_uuid or not player_name:  # check if not none
         return redirect("/")
 
-    if not validate_uuid(game_uuid) or not validate_name(player_name):  # check if invalid input
+    if not validate_uuid(game_uuid) or not validate_player_name(player_name):  # check if invalid input
         return redirect("/")
 
     if request.method == 'POST':
@@ -57,7 +57,7 @@ def create_game_run():
     if not player_name or not game_description:  # check if not none
         return redirect("/")
 
-    if not validate_name(player_name) or not validate_description(game_description):  # check if invalid input
+    if not validate_player_name(player_name) or not validate_description(game_description):  # check if invalid input
         return redirect("/")
 
     if request.method == 'POST':
@@ -87,7 +87,26 @@ def start_game_run(game_uuid, player_uuid):
         return redirect("/")
 
     if request.method == 'POST':
-        response_start_game = start_game(game_uuid, player_uuid)
+        start_game(game_uuid, player_uuid)
+
+    return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+
+def select_character_run(game_uuid, player_uuid):
+    character_name = request.values.get('character-name')
+    character_remove = ""
+
+    print("character_name: ", character_name)
+    print("character_remove: ", character_remove)
+
+    if not character_name:  # check if not none
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if not validate_card_name(character_name):  # check if invalid input
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if request.method == 'POST':
+        select_character(game_uuid, player_uuid, character_name, character_remove)
 
     return redirect("/game/" + game_uuid + "/" + player_uuid)
 
@@ -109,11 +128,28 @@ def game_player_run(game_uuid, player_uuid):
         if is_request_successful(response_get_characters.status_code):
             characters_full_info = response_get_characters.json()
 
+        response_game_possible_characters = get_possible_characters(game_uuid)
+
+        if is_request_successful(response_game_possible_characters.status_code):
+            possible_characters = response_game_possible_characters.json()
+
+            print("possible characters:")
+            pprint(possible_characters)
+
+            if characters_full_info:  # check if we have the full info on each character in the game
+                for character in possible_characters:
+                    character["order"] = list(filter(lambda _character: _character["name"] == character["name"], characters_full_info))[0]["order"]
+
+                possible_characters = sorted(possible_characters, key=lambda character: character["order"], reverse=False)
+
+            game["possible_characters"] = possible_characters
+
         response_game_removed_characters = get_removed_characters(game_uuid)
 
         if is_request_successful(response_game_removed_characters.status_code):
             removed_characters = response_game_removed_characters.json()
 
+            print("removed characters:")
             pprint(removed_characters)
 
             game["removed_characters"] = removed_characters
@@ -174,10 +210,16 @@ def game_player_run(game_uuid, player_uuid):
 
                     player["cards"] = cards
 
-                    player["card_pics"] = ["_back.jpg"] * len(cards)
+                    player["card_pics"] = []
 
-                    if player["uuid"] == player_uuid:
-                        player["card_pics"] = list(map(lambda x: x["name"].replace(" ", "_").lower() + ".jpg", cards))
+                    for card in cards:
+                        file_name = "_back.jpg"
+
+                        if player["uuid"] == player_uuid:
+                            file_name = card["name"].replace(" ", "_").lower() + ".jpg"
+
+                        for index in range(card["amount"]):
+                            player["card_pics"].append(file_name)
 
                 response_player_buildings = get_player_buildings(game_uuid, player["uuid"])
 

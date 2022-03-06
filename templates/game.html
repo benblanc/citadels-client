@@ -43,15 +43,29 @@
             <p><strong>Coins</strong>: {{ player["coins"] }}</p>
             <p><strong>King</strong>: {{ player["king"] }}</p>
             <p><strong>Protected</strong>: {{ player["protected"] }}</p>
-            {% if player["uuid"] == player_uuid and game["state"] == "selection_phase" or game["state"] == "turn_phase" %}
-            <div class="dropdown">
-                <button class="dropbtn">Actions</button>
-                <div class="dropdown-content">
-                    <a href="#">Link 1</a>
-                    <a href="#">Link 2</a>
-                    <a href="#">Link 3</a>
-                </div>
-            </div>
+            {% if game["state"] == "selection_phase" and player["uuid"] == player_uuid %}
+            <p><strong>Expected to select a character</strong></p>
+            {% endif %}
+            <!--            {% if player["uuid"] == player_uuid and game["state"] == "selection_phase" or game["state"] == "turn_phase" %}-->
+            <!--            <div class="dropdown">-->
+            <!--                <button class="dropbtn">Actions</button>-->
+            <!--                <div class="dropdown-content">-->
+            <!--                    <a href="#">Link 1</a>-->
+            <!--                    <a href="#">Link 2</a>-->
+            <!--                    <a href="#">Link 3</a>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <!--            {% endif %}-->
+            {% if game["state"] == "selection_phase" and player["uuid"] == player_uuid and player["select_expected"] %}
+            <form action="{{ url_for('select_character', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
+                <p>Pick a character for this round:</p>
+                <select name="character-name">
+                    {% for character in game['possible_characters'] %}
+                    <option value="{{ character['name'] }}">{{ character['name'] }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Select</button>
+            </form>
             {% endif %}
         </div>
 
