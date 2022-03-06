@@ -92,17 +92,30 @@ def start_game_run(game_uuid, player_uuid):
     return redirect("/game/" + game_uuid + "/" + player_uuid)
 
 
-def select_character_run(game_uuid, player_uuid):
+def select_character_run(game_uuid, player_uuid, amount_players, player_king, amount_removed_characters):
     character_name = request.values.get('character-name')
     character_remove = ""
 
+    if amount_players == 2 and not player_king or amount_players == 2 and amount_removed_characters > 1:  # character only needs to be removed when game has two players and the first player to select (the king) does not discard one
+        character_remove = request.values.get('character-remove')
+
+        if not character_remove:  # check if not none
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+        if not validate_card_name(character_remove):  # check if invalid input
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
     print("character_name: ", character_name)
     print("character_remove: ", character_remove)
+    print("amount_players: ", amount_players)
 
     if not character_name:  # check if not none
         return redirect("/game/" + game_uuid + "/" + player_uuid)
 
     if not validate_card_name(character_name):  # check if invalid input
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if character_name == character_remove:  # check if character to keep is same as character to remove
         return redirect("/game/" + game_uuid + "/" + player_uuid)
 
     if request.method == 'POST':
@@ -115,6 +128,7 @@ def game_player_run(game_uuid, player_uuid):
     game = None
     players = None
     host = False
+    player_uuid_select_expected = None
 
     response_game = get_game(game_uuid)
 
@@ -179,6 +193,12 @@ def game_player_run(game_uuid, player_uuid):
             players = players[player_seat:] + players[:player_seat]  # update order of player in array so you are first, meaning you will be on top of the game UI
 
             for player in players:
+                if player["uuid"] == player_uuid and player["hosting"]:
+                    host = True
+
+                if player["select_expected"]:
+                    player_uuid_select_expected = player["uuid"]
+
                 response_player_characters = get_player_characters(game_uuid, player["uuid"])
 
                 if is_request_successful(response_player_characters.status_code):
@@ -197,9 +217,6 @@ def game_player_run(game_uuid, player_uuid):
                             file_name = character["name"].lower() + ".jpg"
 
                         player["character_pics"].append(file_name)
-
-                    if player["uuid"] == player_uuid and player["hosting"]:
-                        host = True
 
                 response_player_cards = get_player_cards(game_uuid, player["uuid"])
 
@@ -232,4 +249,4 @@ def game_player_run(game_uuid, player_uuid):
 
                     player["building_pics"] = list(map(lambda x: x["name"].replace(" ", "_").lower() + ".jpg", buildings))
 
-    return render_template("game.html", game=game, players=players, player_uuid=player_uuid, host=host)
+    return render_template("game.html", game=game, players=players, player_uuid=player_uuid, host=host, player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]))
