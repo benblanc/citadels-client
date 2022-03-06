@@ -37,6 +37,11 @@ def start_game(game_uuid, player_uuid):
     return start_game_run(game_uuid, player_uuid)
 
 
+@app.route("/select_character/<string:game_uuid>/<string:player_uuid>", methods=['POST'])
+def select_character(game_uuid, player_uuid):
+    return select_character_run(game_uuid, player_uuid)
+
+
 @app.route("/game/<string:game_uuid>/<string:player_uuid>")
 def game_player(game_uuid, player_uuid):
     return game_player_run(game_uuid, player_uuid)
