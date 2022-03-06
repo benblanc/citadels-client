@@ -116,6 +116,14 @@ def get_player_buildings(game_uuid, player_uuid):
     return response
 
 
+def get_possible_characters(game_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/possible_characters")
+
+    log_response(response)
+
+    return response
+
+
 def get_removed_characters(game_uuid):
     response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/removed_characters")
 
@@ -131,6 +139,19 @@ def get_characters():
     }
 
     response = requests.get(url=get_citadels_api_base_url() + "/cards/characters", params=query_params)
+
+    log_response(response)
+
+    return response
+
+
+def select_character(game_uuid, player_uuid, name, remove):
+    payload = {
+        "name": name,
+        "remove": remove
+    }
+
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.select", json=payload)
 
     log_response(response)
 

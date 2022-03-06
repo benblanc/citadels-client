@@ -37,6 +37,11 @@ def start_game(game_uuid, player_uuid):
     return start_game_run(game_uuid, player_uuid)
 
 
+@app.route("/select_character/<string:game_uuid>/<string:player_uuid>/<int:amount_players>/<string:player_king>/<int:amount_removed_characters>", methods=['POST'])
+def select_character(game_uuid, player_uuid, amount_players, player_king, amount_removed_characters):
+    return select_character_run(game_uuid, player_uuid, amount_players, string_to_bool(player_king), amount_removed_characters)
+
+
 @app.route("/game/<string:game_uuid>/<string:player_uuid>")
 def game_player(game_uuid, player_uuid):
     return game_player_run(game_uuid, player_uuid)
