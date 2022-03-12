@@ -184,7 +184,7 @@ def game_player_run(game_uuid, player_uuid):
 
             if characters_full_info:  # check if we have the full info on each character in the game
                 for character in possible_characters:
-                    character["order"] = list(filter(lambda _character: _character["name"] == character["name"], characters_full_info))[0]["order"]
+                    character["order"] = filter_on("name", character["name"], characters_full_info)["order"]
 
                 possible_characters = sorted(possible_characters, key=lambda character: character["order"], reverse=False)
 
@@ -197,12 +197,12 @@ def game_player_run(game_uuid, player_uuid):
 
             game["removed_characters"] = removed_characters
 
-            open_removed_characters = list(filter(lambda character: character["open"] == True, removed_characters))
-            closed_removed_characters = list(filter(lambda character: character["open"] == False, removed_characters))
+            open_removed_characters = filter_on("open", True, removed_characters, False)
+            closed_removed_characters = filter_on("open", False, removed_characters, False)
 
             if characters_full_info:  # check if we have the full info on each character in the game
                 for character in open_removed_characters:
-                    character["order"] = list(filter(lambda _character: _character["name"] == character["name"], characters_full_info))[0]["order"]
+                    character["order"] = filter_on("name", character["name"], characters_full_info)["order"]
 
                 open_removed_characters = sorted(open_removed_characters, key=lambda character: character["order"], reverse=False)
 
@@ -235,7 +235,7 @@ def game_player_run(game_uuid, player_uuid):
         if is_request_successful(response_players.status_code):
             players = response_players.json()
 
-            player_seat = list(filter(lambda player: player["uuid"] == player_uuid, players))[0]["seat"]
+            player_seat = filter_on("uuid", player_uuid, players)["seat"]
 
             players = players[player_seat:] + players[:player_seat]  # update order of player in array so you are first, meaning you will be on top of the game UI
 
@@ -255,10 +255,7 @@ def game_player_run(game_uuid, player_uuid):
 
                     player["current_character"] = {"name": None}
 
-                    current_character = list(filter(lambda character: character["name"] == game["character_turn"], characters))
-
-                    if current_character:  # check if there's a character
-                        player["current_character"] = current_character[0]
+                    player["current_character"] = filter_on("name", game["character_turn"], characters)
 
                     player["character_pics"] = []
 
