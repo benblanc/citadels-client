@@ -93,7 +93,7 @@
                     <option value="coins">2 coins</option>
                     <option value="cards">2 cards and keep 1</option>
                 </select>
-                <button type="submit">Select</button>
+                <button type="submit">Receive</button>
             </form>
             {% endif %}
 
@@ -105,7 +105,19 @@
                     <option value="{{ card['name'] }}">{{ card['name'] }}</option>
                     {% endfor %}
                 </select>
-                <button type="submit">Select</button>
+                <button type="submit">Keep</button>
+            </form>
+            {% endif %}
+
+            {% if player["current_character"]["income_received"] and player["current_character"]["built"] < building_limit %}
+            <form action="{{ url_for('build_district', game_uuid=game['uuid'], player_uuid=player_uuid, player_buildings=player_buildings) }}" method="post">
+                <p>Pick which district you want to build:</p>
+                <select name="district-name">
+                    {% for card in player['cards'] %}
+                    <option value="{{ card['name'] }}">{{ card['name'] }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Build</button>
             </form>
             {% endif %}
 
