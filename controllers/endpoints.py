@@ -156,3 +156,39 @@ def select_character(game_uuid, player_uuid, name, remove):
     log_response(response)
 
     return response
+
+
+def receive_coins(game_uuid, player_uuid):
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.receive_coins")
+
+    log_response(response)
+
+    return response
+
+
+def draw_cards(game_uuid, player_uuid):
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.draw_cards")
+
+    log_response(response)
+
+    return response
+
+
+def get_drawn_cards(game_uuid, player_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/drawn_cards")
+
+    log_response(response)
+
+    return response
+
+
+def keep_card(game_uuid, player_uuid, name):
+    payload = {
+        "name": name
+    }
+
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.keep_card", json=payload)
+
+    log_response(response)
+
+    return response
