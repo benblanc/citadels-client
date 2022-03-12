@@ -12,6 +12,7 @@
             <p><strong>Round</strong>: {{ game["round"] }}</p>
             <p><strong>State</strong>: {{ game["state"] }}</p>
             <p><strong>Character turn</strong>: {{ game["character_turn"] }}</p>
+
             {% if host and game["state"] == "created" %}
             <form action="{{ url_for('start_game', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
                 <div class="home-button">
@@ -19,6 +20,7 @@
                 </div>
             </form>
             {% endif %}
+
             {% if not host and game["state"] == "created" %}
             <p>Waiting for other players to join...</p>
             {% endif %}
@@ -68,6 +70,7 @@
                     <option value="{{ character['name'] }}">{{ character['name'] }}</option>
                     {% endfor %}
                 </select>
+
                 {% if game["amount_players"] == 2 and not player['king'] or game["amount_players"] == 2 and amount_removed_characters > 1 %}
                 <p>Pick a character to remove for this round:</p>
                 <select name="character-remove">
@@ -76,6 +79,7 @@
                     {% endfor %}
                 </select>
                 {% endif %}
+
                 <button type="submit">Select</button>
             </form>
             {% endif %}
