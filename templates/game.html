@@ -109,6 +109,14 @@
             </form>
             {% endif %}
 
+            {% if player["current_character"]["income_received"] %}
+            <form action="{{ url_for('end_turn', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
+                <div class="home-button">
+                    <input type="submit" name="end_turn" value="End turn" class="game-buttons"/>
+                </div>
+            </form>
+            {% endif %}
+
             {% if player["current_character"]["income_received"] and player["current_character"]["built"] < building_limit %}
             <form action="{{ url_for('build_district', game_uuid=game['uuid'], player_uuid=player_uuid, player_buildings=player_buildings) }}" method="post">
                 <p>Pick which district you want to build:</p>
@@ -121,11 +129,45 @@
             </form>
             {% endif %}
 
-            {% if player["current_character"]["income_received"] %}
-            <form action="{{ url_for('end_turn', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
-                <div class="home-button">
-                    <input type="submit" name="end_turn" value="End turn" class="game-buttons"/>
-                </div>
+            {% if not player["current_character"]["ability_used"] and not player["current_character"]["name"] in ["king", "bishop", "merchant", "architect"] %}
+            <form action="{{ url_for('use_main_character_ability', game_uuid=game['uuid'], player_uuid=player_uuid, current_character=player['current_character']['name']) }}" method="post">
+                {% if player["current_character"]["name"] in ["assassin", "thief"] %}
+                <p>On which character do you want to use your ability?</p>
+                <select name="character-name">
+                    {% for character in possible_characters_to_assassinate_or_rob %}
+                    <option value="{{ character['name'] }}">{{ character['name'] }}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+
+                {% if player["current_character"]["name"] == "magician" %}
+                <p>On which character do you want to use your ability?</p>
+                <select name="character-name">
+                    {% for character in possible_characters_to_assassinate_or_rob %}
+                    <option value="{{ character['name'] }}">{{ character['name'] }}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+
+                {% if player["current_character"]["name"] == "warlord" %}
+                <p>On which player and district do you want to use your ability?</p>
+                <select name="player-district">
+                    {% for player in players %}
+                    {% for building in player["buildings"] %}
+                    <option value="{{ player['uuid'] }} {{ building['name'] }}">{{ player['name'] }} - {{ building['name'] }}</option>
+                    {% endfor %}
+                    {% endfor %}
+                </select>
+                {% endif %}
+
+                <button type="submit">Use main ability</button>
+            </form>
+            {% endif %}
+
+            {% if player["current_character"]["name"] in characters_secondary_ability and not player["current_character"]["ability_additional_income_used"] %}
+            <form action="{{ url_for('use_secondary_character_ability', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
+                <p>Use ability for extra income?</p>
+                <button type="submit">Use second ability</button>
             </form>
             {% endif %}
 

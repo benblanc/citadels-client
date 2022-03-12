@@ -21,9 +21,6 @@ def join_game_run():
     game_uuid = request.values.get('game-to-join')
     player_name = request.values.get('player-name')
 
-    print("game_uuid: ", game_uuid)
-    print("player_name: ", player_name)
-
     if not game_uuid or not player_name:  # check if not none
         return redirect("/")
 
@@ -36,11 +33,7 @@ def join_game_run():
         if not is_request_successful(response_join_game.status_code):
             return redirect("/")
 
-        player_uuid = response_join_game.json()["uuid"]
-
-        print("player_uuid: ", player_uuid)
-
-        return redirect("/game/" + game_uuid + "/" + player_uuid)
+        return redirect("/game/" + game_uuid + "/" + response_join_game.json()["uuid"])
 
     return redirect("/")
 
@@ -50,9 +43,6 @@ def create_game_run():
     game_description = request.values.get('game-description')
 
     game_name = "name_will_be_removed"
-
-    print("player_name: ", player_name)
-    print("game_description: ", game_description)
 
     if not player_name or not game_description:  # check if not none
         return redirect("/")
@@ -73,11 +63,7 @@ def create_game_run():
         if not is_request_successful(response_join_game.status_code):
             return redirect("/")
 
-        player_uuid = response_join_game.json()["uuid"]
-
-        print("player_uuid: ", player_uuid)
-
-        return redirect("/game/" + game_uuid + "/" + player_uuid)
+        return redirect("/game/" + game_uuid + "/" + response_join_game.json()["uuid"])
 
     return redirect("/")
 
@@ -105,10 +91,6 @@ def select_character_run(game_uuid, player_uuid, amount_players, player_king, am
         if not validate_card_name(character_remove):  # check if invalid input
             return redirect("/game/" + game_uuid + "/" + player_uuid)
 
-    print("character_name: ", character_name)
-    print("character_remove: ", character_remove)
-    print("amount_players: ", amount_players)
-
     if not character_name:  # check if not none
         return redirect("/game/" + game_uuid + "/" + player_uuid)
 
@@ -126,8 +108,6 @@ def select_character_run(game_uuid, player_uuid, amount_players, player_king, am
 
 def receive_income_run(game_uuid, player_uuid):
     income_type = request.values.get('income-type')
-
-    print("income_type: ", income_type)
 
     if not income_type:  # check if not none
         return redirect("/game/" + game_uuid + "/" + player_uuid)
@@ -178,6 +158,59 @@ def build_district_run(game_uuid, player_uuid, player_buildings):
     return redirect("/game/" + game_uuid + "/" + player_uuid)
 
 
+def use_main_character_ability_run(game_uuid, player_uuid, current_character):
+    if current_character in ["assassin", "thief"]:
+        character_name = request.values.get('character-name')
+
+        if not character_name:  # check if not none
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+        if not validate_card_name(character_name):  # check if invalid input
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    elif current_character == "magician":
+        pass
+
+    elif current_character == "warlord":
+        player_district = request.values.get('player-district')
+
+        if not player_district:  # check if not none
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+        items = player_district.split(" ")  # split on whitespace
+
+        if len(items) != 2:  # check if expected amount of items
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+        other_player_uuid = items[0]  # get uuid of player to target
+        district_name = items[1]  # get district to target
+
+        if not validate_uuid(other_player_uuid):  # check if invalid input
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+        if not validate_card_name(district_name):  # check if invalid input
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if request.method == 'POST':
+        if current_character in ["assassin", "thief"]:
+            use_ability(game_uuid, player_uuid, main=True, character_name=character_name)
+
+        elif current_character == "magician":
+            pass
+
+        elif current_character == "warlord":
+            use_ability(game_uuid, player_uuid, main=True, district_names=[district_name], other_player_uuid=other_player_uuid)
+
+    return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+
+def use_secondary_character_ability_run(game_uuid, player_uuid):
+    if request.method == 'POST':
+        use_ability(game_uuid, player_uuid)
+
+    return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+
 def end_turn_run(game_uuid, player_uuid):
     if request.method == 'POST':
         end_turn(game_uuid, player_uuid)
@@ -193,6 +226,14 @@ def game_player_run(game_uuid, player_uuid):
     player_drawn_card_pics = []
     player_buildings = None
     building_limit = 1
+    possible_characters_to_assassinate_or_rob = []
+
+    characters_secondary_ability = [  # should be done through ability look-up
+        "king",
+        "bishop",
+        "merchant",
+        "warlord"
+    ]
 
     response_game = get_game(game_uuid)
 
@@ -203,6 +244,11 @@ def game_player_run(game_uuid, player_uuid):
 
         if is_request_successful(response_get_characters.status_code):
             characters_full_info = response_get_characters.json()
+
+        response_get_deck_characters = get_deck_characters(game_uuid)
+
+        if is_request_successful(response_get_deck_characters.status_code):
+            game["deck_characters"] = response_get_deck_characters.json()
 
         response_game_possible_characters = get_possible_characters(game_uuid)
 
@@ -224,8 +270,8 @@ def game_player_run(game_uuid, player_uuid):
 
             game["removed_characters"] = removed_characters
 
-            open_removed_characters = filter_on("open", True, removed_characters, False)
-            closed_removed_characters = filter_on("open", False, removed_characters, False)
+            open_removed_characters = filter_on("open", True, removed_characters, False) or []
+            closed_removed_characters = filter_on("open", False, removed_characters, False) or []
 
             if characters_full_info:  # check if we have the full info on each character in the game
                 for character in open_removed_characters:
@@ -258,6 +304,23 @@ def game_player_run(game_uuid, player_uuid):
 
                     if is_request_successful(response_characters.status_code):
                         building_limit = filter_on("name", character["name"], response_characters.json())["max_built"]  # get building limit for character
+
+        if game["deck_characters"] and game["removed_characters"]:  # check if both properties have values
+            possible_characters_to_assassinate_or_rob = filter_on("name", "assassin", game["deck_characters"], keep_first_item=False, equal_to=False)  # remove assassin from possible targets
+
+            open_removed_characters = filter_on("open", True, game["removed_characters"], False)  # get all open remove characters
+
+            for character in open_removed_characters:  # go over publically known removed characters
+                possible_characters_to_assassinate_or_rob = filter_on("name", character["name"], possible_characters_to_assassinate_or_rob, keep_first_item=False, equal_to=False)  # remove character from possible targets
+
+            if game["character_turn"] == "thief":  # check if it's the thief's turn
+                possible_characters_to_assassinate_or_rob = filter_on("name", "thief", possible_characters_to_assassinate_or_rob, keep_first_item=False, equal_to=False)  # remove thief from possible targets
+
+            if characters_full_info:  # check if we have the full info on each character in the game
+                for character in possible_characters_to_assassinate_or_rob:
+                    character["order"] = filter_on("name", character["name"], characters_full_info)["order"]
+
+                possible_characters_to_assassinate_or_rob = sorted(possible_characters_to_assassinate_or_rob, key=lambda character: character["order"], reverse=False)
 
         response_players = get_players(game["uuid"])
 
@@ -294,6 +357,9 @@ def game_player_run(game_uuid, player_uuid):
 
                         player["character_pics"].append(file_name)
 
+                        if character["assassinated"]:  # check if character is assassinated
+                            possible_characters_to_assassinate_or_rob = filter_on("name", character["name"], possible_characters_to_assassinate_or_rob, keep_first_item=False, equal_to=False)  # remove character from possible targets
+
                 response_player_cards = get_player_cards(game_uuid, player["uuid"])
 
                 if is_request_successful(response_player_cards.status_code):
@@ -326,4 +392,4 @@ def game_player_run(game_uuid, player_uuid):
                 if is_request_successful(response_drawn_cards.status_code):
                     player["drawn_cards"] = response_drawn_cards.json()
 
-    return render_template("game.html", game=game, players=players, player_uuid=player_uuid, host=host, player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]), player_drawn_card_pics=player_drawn_card_pics, player_buildings=str(player_buildings), building_limit=building_limit)
+    return render_template("game.html", game=game, players=players, player_uuid=player_uuid, host=host, player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]), player_drawn_card_pics=player_drawn_card_pics, player_buildings=str(player_buildings), building_limit=building_limit, characters_secondary_ability=characters_secondary_ability, possible_characters_to_assassinate_or_rob=possible_characters_to_assassinate_or_rob)
