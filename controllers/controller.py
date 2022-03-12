@@ -160,6 +160,13 @@ def keep_card_run(game_uuid, player_uuid):
     return redirect("/game/" + game_uuid + "/" + player_uuid)
 
 
+def end_turn_run(game_uuid, player_uuid):
+    if request.method == 'POST':
+        end_turn(game_uuid, player_uuid)
+
+    return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+
 def game_player_run(game_uuid, player_uuid):
     game = None
     players = None

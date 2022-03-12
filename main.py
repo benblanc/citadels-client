@@ -52,6 +52,11 @@ def keep_card(game_uuid, player_uuid):
     return keep_card_run(game_uuid, player_uuid)
 
 
+@app.route("/end_turn/<string:game_uuid>/<string:player_uuid>", methods=['POST'])
+def end_turn(game_uuid, player_uuid):
+    return end_turn_run(game_uuid, player_uuid)
+
+
 @app.route("/game/<string:game_uuid>/<string:player_uuid>")
 def game_player(game_uuid, player_uuid):
     return game_player_run(game_uuid, player_uuid)

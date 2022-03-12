@@ -12,6 +12,7 @@
             <p><strong>Round</strong>: {{ game["round"] }}</p>
             <p><strong>State</strong>: {{ game["state"] }}</p>
             <p><strong>Character turn</strong>: {{ game["character_turn"] }}</p>
+
             {% if host and game["state"] == "created" %}
             <form action="{{ url_for('start_game', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
                 <div class="home-button">
@@ -19,6 +20,7 @@
                 </div>
             </form>
             {% endif %}
+
             {% if not host and game["state"] == "created" %}
             <p>Waiting for other players to join...</p>
             {% endif %}
@@ -55,19 +57,11 @@
             <p><strong>Coins</strong>: {{ player["coins"] }}</p>
             <p><strong>King</strong>: {{ player["king"] }}</p>
             <p><strong>Protected</strong>: {{ player["protected"] }}</p>
+
             {% if player_uuid_select_expected == player["uuid"] and player_uuid != player["uuid"] %}
             <p><strong>Expected to select a character!</strong></p>
             {% endif %}
-            <!--            {% if player["uuid"] == player_uuid and game["state"] == "selection_phase" or game["state"] == "turn_phase" %}-->
-            <!--            <div class="dropdown">-->
-            <!--                <button class="dropbtn">Actions</button>-->
-            <!--                <div class="dropdown-content">-->
-            <!--                    <a href="#">Link 1</a>-->
-            <!--                    <a href="#">Link 2</a>-->
-            <!--                    <a href="#">Link 3</a>-->
-            <!--                </div>-->
-            <!--            </div>-->
-            <!--            {% endif %}-->
+
             {% if game["state"] == "selection_phase" and player["uuid"] == player_uuid and player["select_expected"] %}
             <form action="{{ url_for('select_character', game_uuid=game['uuid'], player_uuid=player_uuid, amount_players=game['amount_players'], player_king=player['king'], amount_removed_characters=amount_removed_characters) }}" method="post">
                 <p>Pick a character for this round:</p>
@@ -76,6 +70,7 @@
                     <option value="{{ character['name'] }}">{{ character['name'] }}</option>
                     {% endfor %}
                 </select>
+
                 {% if game["amount_players"] == 2 and not player['king'] or game["amount_players"] == 2 and amount_removed_characters > 1 %}
                 <p>Pick a character to remove for this round:</p>
                 <select name="character-remove">
@@ -84,13 +79,10 @@
                     {% endfor %}
                 </select>
                 {% endif %}
+
                 <button type="submit">Select</button>
             </form>
             {% endif %}
-
-            <!--            <p>{{game["state"]}}</p>-->
-            <!--            <p>{{player["uuid"]}}</p>-->
-            <!--            <p>{{player["current_character"]}}</p>-->
 
             {% if game["state"] == "turn_phase" and player["uuid"] == player_uuid and game["character_turn"] == player["current_character"]["name"] %}
 
@@ -114,6 +106,14 @@
                     {% endfor %}
                 </select>
                 <button type="submit">Select</button>
+            </form>
+            {% endif %}
+
+            {% if player["current_character"]["income_received"] %}
+            <form action="{{ url_for('end_turn', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
+                <div class="home-button">
+                    <input type="submit" name="end_turn" value="End turn" class="game-buttons"/>
+                </div>
             </form>
             {% endif %}
 
