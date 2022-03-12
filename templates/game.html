@@ -109,6 +109,14 @@
             </form>
             {% endif %}
 
+            {% if player["current_character"]["income_received"] %}
+            <form action="{{ url_for('end_turn', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
+                <div class="home-button">
+                    <input type="submit" name="end_turn" value="End turn" class="game-buttons"/>
+                </div>
+            </form>
+            {% endif %}
+
             {% endif %}
         </div>
 

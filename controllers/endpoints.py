@@ -192,3 +192,11 @@ def keep_card(game_uuid, player_uuid, name):
     log_response(response)
 
     return response
+
+
+def end_turn(game_uuid, player_uuid):
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.end_turn")
+
+    log_response(response)
+
+    return response
