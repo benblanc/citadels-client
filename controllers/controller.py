@@ -160,6 +160,24 @@ def keep_card_run(game_uuid, player_uuid):
     return redirect("/game/" + game_uuid + "/" + player_uuid)
 
 
+def build_district_run(game_uuid, player_uuid, player_buildings):
+    district_name = request.values.get('district-name')
+
+    if not district_name:  # check if not none
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if not validate_card_name(district_name):  # check if invalid input
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if district_name in player_buildings:
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if request.method == 'POST':
+        build_district(game_uuid, player_uuid, district_name)
+
+    return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+
 def end_turn_run(game_uuid, player_uuid):
     if request.method == 'POST':
         end_turn(game_uuid, player_uuid)
@@ -173,6 +191,8 @@ def game_player_run(game_uuid, player_uuid):
     host = False
     player_uuid_select_expected = None
     player_drawn_card_pics = []
+    player_buildings = None
+    building_limit = 1
 
     response_game = get_game(game_uuid)
 
@@ -217,25 +237,27 @@ def game_player_run(game_uuid, player_uuid):
 
             game["removed_character_pics"] += list(map(lambda x: x["name"].lower() + ".jpg", open_removed_characters))
 
-        response_drawn_cards = get_drawn_cards(game_uuid, player_uuid)
+        response_player_characters = get_player_characters(game_uuid, player_uuid)
 
-        if is_request_successful(response_drawn_cards.status_code):
-            drawn_cards = response_drawn_cards.json()
+        if is_request_successful(response_player_characters.status_code):
+            character = filter_on("name", game["character_turn"], response_player_characters.json())
 
-            response_player_characters = get_player_characters(game_uuid, player_uuid)
+            if character:  # check if not none
+                if game["character_turn"] == character["name"]:  # check if the turn character
+                    response_drawn_cards = get_drawn_cards(game_uuid, player_uuid)
 
-            if is_request_successful(response_player_characters.status_code):
-                character = filter_on("name", game["character_turn"], response_player_characters.json())
+                    if is_request_successful(response_drawn_cards.status_code):
+                        player_drawn_card_pics = list(map(lambda x: x["name"].replace(" ", "_").lower() + ".jpg", response_drawn_cards.json()))  # get pics for drawn cards
 
-                if character:  # check if not none
-                    print("game character_turn: ", game["character_turn"])
-                    print("game player_character_name: ", character["name"])
+                    response_buildings = get_player_buildings(game_uuid, player_uuid)
 
-                    if game["character_turn"] == character["name"]:
-                        player_drawn_card_pics = list(map(lambda x: x["name"].replace(" ", "_").lower() + ".jpg", drawn_cards))
+                    if is_request_successful(response_buildings.status_code):
+                        player_buildings = list(map(lambda building: building["name"], response_buildings.json()))  # get names of built districts in player's city
 
-                        print("player_drawn_card_pics: ")
-                        pprint(player_drawn_card_pics)
+                    response_characters = get_characters()
+
+                    if is_request_successful(response_characters.status_code):
+                        building_limit = filter_on("name", character["name"], response_characters.json())["max_built"]  # get building limit for character
 
         response_players = get_players(game["uuid"])
 
@@ -259,8 +281,6 @@ def game_player_run(game_uuid, player_uuid):
                     characters = response_player_characters.json()
 
                     player["characters"] = characters
-
-                    player["current_character"] = {"name": None}
 
                     player["current_character"] = filter_on("name", game["character_turn"], characters)
 
@@ -306,4 +326,4 @@ def game_player_run(game_uuid, player_uuid):
                 if is_request_successful(response_drawn_cards.status_code):
                     player["drawn_cards"] = response_drawn_cards.json()
 
-    return render_template("game.html", game=game, players=players, player_uuid=player_uuid, host=host, player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]), player_drawn_card_pics=player_drawn_card_pics)
+    return render_template("game.html", game=game, players=players, player_uuid=player_uuid, host=host, player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]), player_drawn_card_pics=player_drawn_card_pics, player_buildings=str(player_buildings), building_limit=building_limit)

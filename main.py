@@ -52,6 +52,11 @@ def keep_card(game_uuid, player_uuid):
     return keep_card_run(game_uuid, player_uuid)
 
 
+@app.route("/build_district/<string:game_uuid>/<string:player_uuid>/<string:player_buildings>", methods=['POST'])
+def build_district(game_uuid, player_uuid, player_buildings):
+    return build_district_run(game_uuid, player_uuid, list(player_buildings))
+
+
 @app.route("/end_turn/<string:game_uuid>/<string:player_uuid>", methods=['POST'])
 def end_turn(game_uuid, player_uuid):
     return end_turn_run(game_uuid, player_uuid)
