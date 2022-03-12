@@ -124,18 +124,53 @@ def select_character_run(game_uuid, player_uuid, amount_players, player_king, am
     return redirect("/game/" + game_uuid + "/" + player_uuid)
 
 
+def receive_income_run(game_uuid, player_uuid):
+    income_type = request.values.get('income-type')
+
+    print("income_type: ", income_type)
+
+    if not income_type:  # check if not none
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if not validate_income_type(income_type):  # check if invalid input
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if request.method == 'POST':
+        if income_type == "coins":
+            receive_coins(game_uuid, player_uuid)
+
+        elif income_type == "cards":
+            draw_cards(game_uuid, player_uuid)
+
+    return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+
+def keep_card_run(game_uuid, player_uuid):
+    card_keep = request.values.get('card-keep')
+
+    if not card_keep:  # check if not none
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if not validate_card_name(card_keep):  # check if invalid input
+        return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+    if request.method == 'POST':
+        keep_card(game_uuid, player_uuid, card_keep)
+
+    return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+
 def game_player_run(game_uuid, player_uuid):
     game = None
     players = None
     host = False
     player_uuid_select_expected = None
+    player_drawn_card_pics = []
 
     response_game = get_game(game_uuid)
 
     if is_request_successful(response_game.status_code):
         game = response_game.json()
-
-        pprint(game)
 
         response_get_characters = get_characters()
 
@@ -146,9 +181,6 @@ def game_player_run(game_uuid, player_uuid):
 
         if is_request_successful(response_game_possible_characters.status_code):
             possible_characters = response_game_possible_characters.json()
-
-            print("possible characters:")
-            pprint(possible_characters)
 
             if characters_full_info:  # check if we have the full info on each character in the game
                 for character in possible_characters:
@@ -162,9 +194,6 @@ def game_player_run(game_uuid, player_uuid):
 
         if is_request_successful(response_game_removed_characters.status_code):
             removed_characters = response_game_removed_characters.json()
-
-            print("removed characters:")
-            pprint(removed_characters)
 
             game["removed_characters"] = removed_characters
 
@@ -181,12 +210,30 @@ def game_player_run(game_uuid, player_uuid):
 
             game["removed_character_pics"] += list(map(lambda x: x["name"].lower() + ".jpg", open_removed_characters))
 
+        response_drawn_cards = get_drawn_cards(game_uuid, player_uuid)
+
+        if is_request_successful(response_drawn_cards.status_code):
+            drawn_cards = response_drawn_cards.json()
+
+            response_player_characters = get_player_characters(game_uuid, player_uuid)
+
+            if is_request_successful(response_player_characters.status_code):
+                character = filter_on("name", game["character_turn"], response_player_characters.json())
+
+                if character:  # check if not none
+                    print("game character_turn: ", game["character_turn"])
+                    print("game player_character_name: ", character["name"])
+
+                    if game["character_turn"] == character["name"]:
+                        player_drawn_card_pics = list(map(lambda x: x["name"].replace(" ", "_").lower() + ".jpg", drawn_cards))
+
+                        print("player_drawn_card_pics: ")
+                        pprint(player_drawn_card_pics)
+
         response_players = get_players(game["uuid"])
 
         if is_request_successful(response_players.status_code):
             players = response_players.json()
-
-            pprint(players)
 
             player_seat = list(filter(lambda player: player["uuid"] == player_uuid, players))[0]["seat"]
 
@@ -204,9 +251,14 @@ def game_player_run(game_uuid, player_uuid):
                 if is_request_successful(response_player_characters.status_code):
                     characters = response_player_characters.json()
 
-                    pprint(characters)
-
                     player["characters"] = characters
+
+                    player["current_character"] = {"name": None}
+
+                    current_character = list(filter(lambda character: character["name"] == game["character_turn"], characters))
+
+                    if current_character:  # check if there's a character
+                        player["current_character"] = current_character[0]
 
                     player["character_pics"] = []
 
@@ -222,8 +274,6 @@ def game_player_run(game_uuid, player_uuid):
 
                 if is_request_successful(response_player_cards.status_code):
                     cards = response_player_cards.json()
-
-                    pprint(cards)
 
                     player["cards"] = cards
 
@@ -243,10 +293,13 @@ def game_player_run(game_uuid, player_uuid):
                 if is_request_successful(response_player_buildings.status_code):
                     buildings = response_player_buildings.json()
 
-                    pprint(buildings)
-
                     player["buildings"] = buildings
 
                     player["building_pics"] = list(map(lambda x: x["name"].replace(" ", "_").lower() + ".jpg", buildings))
 
-    return render_template("game.html", game=game, players=players, player_uuid=player_uuid, host=host, player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]))
+                response_drawn_cards = get_drawn_cards(game_uuid, player["uuid"])
+
+                if is_request_successful(response_drawn_cards.status_code):
+                    player["drawn_cards"] = response_drawn_cards.json()
+
+    return render_template("game.html", game=game, players=players, player_uuid=player_uuid, host=host, player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]), player_drawn_card_pics=player_drawn_card_pics)

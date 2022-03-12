@@ -15,3 +15,13 @@ def validate_description(description):
 
 def validate_card_name(name):
     return re.match("^[a-zA-Z]+$", name)
+
+
+def validate_income_type(income):
+    response = False
+    options = ["coins", "cards"]
+
+    if income in options:
+        response = True
+
+    return response

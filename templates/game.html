@@ -31,6 +31,18 @@
             <img src="/static/images/characters/{{pic}}" alt="{{ pic }}" class="cards-img" title="{{ pic }}"/>
             {% endfor %}
         </div>
+
+        {% if player_drawn_card_pics %}
+        <div class="vertical-line"></div>
+
+        <p>Drawn cards: </p>
+
+        <div class="cards-display">
+            {% for pic in player_drawn_card_pics %}
+            <img src="/static/images/districts/{{pic}}" alt="{{ pic }}" class="cards-img" title="{{ pic }}"/>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 
     {% for player in players %}
@@ -74,6 +86,37 @@
                 {% endif %}
                 <button type="submit">Select</button>
             </form>
+            {% endif %}
+
+            <!--            <p>{{game["state"]}}</p>-->
+            <!--            <p>{{player["uuid"]}}</p>-->
+            <!--            <p>{{player["current_character"]}}</p>-->
+
+            {% if game["state"] == "turn_phase" and player["uuid"] == player_uuid and game["character_turn"] == player["current_character"]["name"] %}
+
+            {% if not player["current_character"]["income_received"] and not player["drawn_cards"] %}
+            <form action="{{ url_for('receive_income', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
+                <p>Receive income:</p>
+                <select name="income-type">
+                    <option value="coins">2 coins</option>
+                    <option value="cards">2 cards and keep 1</option>
+                </select>
+                <button type="submit">Select</button>
+            </form>
+            {% endif %}
+
+            {% if player["drawn_cards"] %}
+            <form action="{{ url_for('keep_card', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
+                <p>Pick which card you want to keep:</p>
+                <select name="card-keep">
+                    {% for card in player['drawn_cards'] %}
+                    <option value="{{ card['name'] }}">{{ card['name'] }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Select</button>
+            </form>
+            {% endif %}
+
             {% endif %}
         </div>
 

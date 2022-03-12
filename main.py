@@ -42,6 +42,16 @@ def select_character(game_uuid, player_uuid, amount_players, player_king, amount
     return select_character_run(game_uuid, player_uuid, amount_players, string_to_bool(player_king), amount_removed_characters)
 
 
+@app.route("/receive_income/<string:game_uuid>/<string:player_uuid>", methods=['POST'])
+def receive_income(game_uuid, player_uuid):
+    return receive_income_run(game_uuid, player_uuid)
+
+
+@app.route("/keep_card/<string:game_uuid>/<string:player_uuid>", methods=['POST'])
+def keep_card(game_uuid, player_uuid):
+    return keep_card_run(game_uuid, player_uuid)
+
+
 @app.route("/game/<string:game_uuid>/<string:player_uuid>")
 def game_player(game_uuid, player_uuid):
     return game_player_run(game_uuid, player_uuid)

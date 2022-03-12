@@ -37,3 +37,17 @@ def is_request_successful(status_code):
         response = True
 
     return response
+
+
+def filter_on(key, required_value, elements, keep_first_item=True):
+    response = None
+
+    items = list(filter(lambda element: element[key] == required_value, elements))  # keep elements where property value with key matches required value
+
+    if items:  # check if any elements
+        response = items
+
+        if keep_first_item:  # check if only first item is required
+            response = items[0]  # get element
+
+    return response
