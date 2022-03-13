@@ -239,6 +239,8 @@ def game_player_run(game_uuid, player_uuid):
     player_buildings = None
     building_limit = 1
     possible_characters_to_assassinate_or_rob = []
+    highest_score = 0
+    winners = []
 
     characters_secondary_ability = [  # should be done through ability look-up
         "king",
@@ -320,7 +322,7 @@ def game_player_run(game_uuid, player_uuid):
         if game["deck_characters"] and game["removed_characters"]:  # check if both properties have values
             possible_characters_to_assassinate_or_rob = filter_on("name", "assassin", game["deck_characters"], keep_first_item=False, equal_to=False)  # remove assassin from possible targets
 
-            open_removed_characters = filter_on("open", True, game["removed_characters"], False)  # get all open remove characters
+            open_removed_characters = filter_on("open", True, game["removed_characters"], False) or []  # get all open remove characters
 
             for character in open_removed_characters:  # go over publically known removed characters
                 possible_characters_to_assassinate_or_rob = filter_on("name", character["name"], possible_characters_to_assassinate_or_rob, keep_first_item=False, equal_to=False)  # remove character from possible targets
@@ -358,6 +360,12 @@ def game_player_run(game_uuid, player_uuid):
                     player["characters"] = characters
 
                     player["current_character"] = filter_on("name", game["character_turn"], characters)
+
+                    if characters_full_info:  # check if we have the full info on each character in the game
+                        for character in characters:
+                            character["order"] = filter_on("name", character["name"], characters_full_info)["order"]
+
+                        characters = sorted(characters, key=lambda character: character["order"], reverse=False)
 
                     player["character_pics"] = []
 
@@ -409,4 +417,16 @@ def game_player_run(game_uuid, player_uuid):
                 if is_request_successful(response_drawn_cards.status_code):
                     player["drawn_cards"] = response_drawn_cards.json()
 
-    return render_template("game.html", game=game, players=players, player_uuid=player_uuid, host=host, player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]), player_drawn_card_pics=player_drawn_card_pics, player_buildings=str(player_buildings), building_limit=building_limit, characters_secondary_ability=characters_secondary_ability, possible_characters_to_assassinate_or_rob=possible_characters_to_assassinate_or_rob)
+                if player["score"] == highest_score:  # check if player same high score
+                    winners.append(player["name"])  # add player name to winners
+
+                elif player["score"] > highest_score:  # check if player has higher score
+                    highest_score = player["score"]  # set new high score
+                    winners = [player["name"]]  # set player name as winner
+
+    return render_template("game.html",
+                           game=game, players=players, player_uuid=player_uuid, host=host,
+                           player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]),
+                           player_drawn_card_pics=player_drawn_card_pics, player_buildings=str(player_buildings), building_limit=building_limit,
+                           characters_secondary_ability=characters_secondary_ability, possible_characters_to_assassinate_or_rob=possible_characters_to_assassinate_or_rob,
+                           highest_score=highest_score, winners=winners)

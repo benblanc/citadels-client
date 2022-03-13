@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="5">
+    <meta http-equiv="refresh" content="7">
     <title>Game</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -20,6 +20,16 @@
                     <input type="submit" name="start" value="Start" class="game-buttons"/>
                 </div>
             </form>
+            {% endif %}
+
+            {% if game["state"] == "finished" %}
+            <p><strong>The winners are</strong>:</p>
+            <ul>
+                {% for name in winners %}
+                <li>{{ name }} with a score of {{ highest_score }}</li>
+                {% endfor %}
+            </ul>
+
             {% endif %}
 
             {% if not host and game["state"] == "created" %}
@@ -118,7 +128,7 @@
             </form>
             {% endif %}
 
-            {% if player["current_character"]["income_received"] and player["current_character"]["built"] < building_limit %}
+            {% if player["current_character"]["income_received"] and player["current_character"]["built"] < building_limit and player['cards'] %}
             <form action="{{ url_for('build_district', game_uuid=game['uuid'], player_uuid=player_uuid, player_buildings=player_buildings) }}" method="post">
                 <p>Pick which district you want to build:</p>
                 <select name="district-name">

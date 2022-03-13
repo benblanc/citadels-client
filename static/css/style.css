@@ -35,14 +35,14 @@ tr:nth-child(even) {
 .player-display-properties {
 }
 .cards-display {
-  height: 210px;
+  height: 195px;
   background-color: lightgreen;
   margin: 1em;
 }
 .cards-img {
   /* cards have aspect ration of 3:2 -> +- 9 cm height and +- 6 cm width */
-  width: 140px;
-  height: 210px;
+  width: 130px;
+  height: 195px;
   margin: auto;
   border-radius: 10px;
 }
