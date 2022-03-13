@@ -39,10 +39,14 @@ def is_request_successful(status_code):
     return response
 
 
-def filter_on(key, required_value, elements, keep_first_item=True):
+def filter_on(key, required_value, elements, keep_first_item=True, equal_to=True):
     response = None
 
-    items = list(filter(lambda element: element[key] == required_value, elements))  # keep elements where property value with key matches required value
+    if equal_to:  # check if values need to be equal
+        items = list(filter(lambda element: element[key] == required_value, elements))  # keep elements where property value with key matches required value
+
+    else:  # values should not be equal
+        items = list(filter(lambda element: element[key] != required_value, elements))  # keep elements where property value with key matches required value
 
     if items:  # check if any elements
         response = items

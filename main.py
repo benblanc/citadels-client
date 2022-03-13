@@ -57,6 +57,16 @@ def build_district(game_uuid, player_uuid, player_buildings):
     return build_district_run(game_uuid, player_uuid, list(player_buildings))
 
 
+@app.route("/use_main_character_ability/<string:game_uuid>/<string:player_uuid>/<string:current_character>", methods=['POST'])
+def use_main_character_ability(game_uuid, player_uuid, current_character):
+    return use_main_character_ability_run(game_uuid, player_uuid, current_character)
+
+
+@app.route("/use_secondary_character_ability/<string:game_uuid>/<string:player_uuid>", methods=['POST'])
+def use_secondary_character_ability(game_uuid, player_uuid):
+    return use_secondary_character_ability_run(game_uuid, player_uuid)
+
+
 @app.route("/end_turn/<string:game_uuid>/<string:player_uuid>", methods=['POST'])
 def end_turn(game_uuid, player_uuid):
     return end_turn_run(game_uuid, player_uuid)

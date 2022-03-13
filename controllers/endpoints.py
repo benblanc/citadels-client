@@ -206,8 +206,33 @@ def build_district(game_uuid, player_uuid, name):
     return response
 
 
+def use_ability(game_uuid, player_uuid, main=False, character_name="", district_names=None, other_player_uuid=""):
+    payload = {
+        "main": main,
+        "name": {
+            "character": character_name,
+            "districts": district_names or []
+        },
+        "player_uuid": other_player_uuid
+    }
+
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.use_ability", json=payload)
+
+    log_response(response)
+
+    return response
+
+
 def end_turn(game_uuid, player_uuid):
     response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.end_turn")
+
+    log_response(response)
+
+    return response
+
+
+def get_deck_characters(game_uuid):
+    response = requests.get(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/deck_characters")
 
     log_response(response)
 
