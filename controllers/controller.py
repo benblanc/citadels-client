@@ -169,7 +169,15 @@ def use_main_character_ability_run(game_uuid, player_uuid, current_character):
             return redirect("/game/" + game_uuid + "/" + player_uuid)
 
     elif current_character == "magician":
-        pass
+        other_player_uuid = request.values.get('player-uuid')
+        card_names = request.form.getlist('card-name')
+
+        if not other_player_uuid:  # check if not none
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+        if card_names:  # check if some checkboxes are marked
+            if not validate_card_names(card_names):  # check if invalid input
+                return redirect("/game/" + game_uuid + "/" + player_uuid)
 
     elif current_character == "warlord":
         player_district = request.values.get('player-district')
@@ -177,7 +185,7 @@ def use_main_character_ability_run(game_uuid, player_uuid, current_character):
         if not player_district:  # check if not none
             return redirect("/game/" + game_uuid + "/" + player_uuid)
 
-        items = player_district.split(" ")  # split on whitespace
+        items = player_district.split("|")  # split on whitespace
 
         if len(items) != 2:  # check if expected amount of items
             return redirect("/game/" + game_uuid + "/" + player_uuid)
@@ -196,7 +204,11 @@ def use_main_character_ability_run(game_uuid, player_uuid, current_character):
             use_ability(game_uuid, player_uuid, main=True, character_name=character_name)
 
         elif current_character == "magician":
-            pass
+            if card_names:  # check if some checkboxes are marked
+                use_ability(game_uuid, player_uuid, main=True, district_names=card_names)
+
+            else:  # no marked checkboxes
+                use_ability(game_uuid, player_uuid, main=True, other_player_uuid=other_player_uuid)
 
         elif current_character == "warlord":
             use_ability(game_uuid, player_uuid, main=True, district_names=[district_name], other_player_uuid=other_player_uuid)
@@ -367,6 +379,8 @@ def game_player_run(game_uuid, player_uuid):
 
                     player["cards"] = cards
 
+                    player["card_names"] = []
+
                     player["card_pics"] = []
 
                     for card in cards:
@@ -377,6 +391,9 @@ def game_player_run(game_uuid, player_uuid):
 
                         for index in range(card["amount"]):
                             player["card_pics"].append(file_name)
+                            player["card_names"].append(card["name"])
+
+                    player["card_names_length"] = len(player["card_names"])
 
                 response_player_buildings = get_player_buildings(game_uuid, player["uuid"])
 

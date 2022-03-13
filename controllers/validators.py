@@ -14,7 +14,17 @@ def validate_description(description):
 
 
 def validate_card_name(name):
-    return re.match("^[a-zA-Z]+$", name)
+    return re.match("^[a-zA-Z\s]+$", name)
+
+
+def validate_card_names(names):
+    response = True
+
+    for name in names:
+        if not validate_card_name(name):
+            response = False
+
+    return response
 
 
 def validate_income_type(income):

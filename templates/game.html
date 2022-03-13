@@ -141,26 +141,41 @@
                 {% endif %}
 
                 {% if player["current_character"]["name"] == "magician" %}
-                <p>On which character do you want to use your ability?</p>
-                <select name="character-name">
-                    {% for character in possible_characters_to_assassinate_or_rob %}
-                    <option value="{{ character['name'] }}">{{ character['name'] }}</option>
+                <p>With whom do you want to trade cards?</p>
+                <select name="player-uuid">
+                    {% for player in players %}
+                    {% if player["uuid"] != player_uuid %}
+                    <option value="{{ player['uuid'] }}">{{ player['name'] }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
+
+                <p>Leave unmarked if you want to trade with a player instead of deck:</p>
+                {% for index in range(player["card_names_length"]) %}
+                <div>
+                    <input type="checkbox" value="{{ player['card_names'][index] }}" name="card-name" id="{{ player['card_names'][index] }}-{{ index }}">
+                    <label for="{{ player['card_names'][index] }}-{{ index }}">{{ player['card_names'][index] }}</label>
+                </div>
+                {% endfor %}
                 {% endif %}
 
                 {% if player["current_character"]["name"] == "warlord" %}
                 <p>On which player and district do you want to use your ability?</p>
                 <select name="player-district">
                     {% for player in players %}
+                    {% if not player["protected"] %}
                     {% for building in player["buildings"] %}
-                    <option value="{{ player['uuid'] }} {{ building['name'] }}">{{ player['name'] }} - {{ building['name'] }}</option>
+                    <option value="{{ player['uuid'] }}|{{ building['name'] }}">{{ player['name'] }} - {{ building['name'] }}</option>
                     {% endfor %}
+                    {% endif %}
                     {% endfor %}
                 </select>
                 {% endif %}
 
-                <button type="submit">Use main ability</button>
+                <div>
+                    <button type="submit">Use main ability</button>
+                </div>
+
             </form>
             {% endif %}
 
