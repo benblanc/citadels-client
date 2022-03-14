@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<div>
+<div class="game-general">
     <div class="game-display">
         <div class="game-display-properties">
             <p><strong>Round</strong>: {{ game["round"] }}</p>
@@ -112,8 +112,8 @@
             <form action="{{ url_for('keep_card', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
                 <p>Pick which card you want to keep:</p>
                 <select name="card-keep">
-                    {% for card in player['drawn_cards'] %}
-                    <option value="{{ card['name'] }}">{{ card['name'] }}</option>
+                    {% for name in player_drawn_card_names %}
+                    <option value="{{ name }}">{{ name }}</option>
                     {% endfor %}
                 </select>
                 <button type="submit">Keep</button>

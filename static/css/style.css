@@ -21,6 +21,10 @@ tr:nth-child(even) {
   height: 200px;
   margin: 1em;
 }
+.game-general {
+  overflow: auto;
+  white-space: nowrap;
+}
 .game-display {
   display: flex;
   background-color: lightpink;

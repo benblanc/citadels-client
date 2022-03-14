@@ -235,6 +235,7 @@ def game_player_run(game_uuid, player_uuid):
     players = None
     host = False
     player_uuid_select_expected = None
+    player_drawn_card_names = []
     player_drawn_card_pics = []
     player_buildings = None
     building_limit = 1
@@ -307,7 +308,11 @@ def game_player_run(game_uuid, player_uuid):
                     response_drawn_cards = get_drawn_cards(game_uuid, player_uuid)
 
                     if is_request_successful(response_drawn_cards.status_code):
-                        player_drawn_card_pics = list(map(lambda x: x["name"].replace(" ", "_").lower() + ".jpg", response_drawn_cards.json()))  # get pics for drawn cards
+                        for card in response_drawn_cards.json():  # go through drawn cards
+                            for index in range(card["amount"]):  # based on amount
+                                player_drawn_card_names.append(card["name"])  # add name
+
+                        player_drawn_card_pics = list(map(lambda name: name.replace(" ", "_").lower() + ".jpg", player_drawn_card_names))  # get pics for drawn cards
 
                     response_buildings = get_player_buildings(game_uuid, player_uuid)
 
@@ -429,4 +434,4 @@ def game_player_run(game_uuid, player_uuid):
                            player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]),
                            player_drawn_card_pics=player_drawn_card_pics, player_buildings=str(player_buildings), building_limit=building_limit,
                            characters_secondary_ability=characters_secondary_ability, possible_characters_to_assassinate_or_rob=possible_characters_to_assassinate_or_rob,
-                           highest_score=highest_score, winners=winners)
+                           highest_score=highest_score, winners=winners, player_drawn_card_names=player_drawn_card_names)
