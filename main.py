@@ -79,7 +79,7 @@ def game_player(game_uuid, player_uuid):
 
 if __name__ == '__main__':
     try:
-        app.run(host='127.0.0.1', port=8081)
+        app.run(host='0.0.0.0', port=8081)
 
     except Exception:
         logging.error(traceback.format_exc())
