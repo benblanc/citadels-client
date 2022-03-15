@@ -9,7 +9,7 @@
 <body>
 <div class="game-general">
     <div class="game-display">
-        <div class="game-display-properties">
+        <div>
             <p><strong>Round</strong>: {{ game["round"] }}</p>
             <p><strong>State</strong>: {{ game["state"] }}</p>
             <p><strong>Character turn</strong>: {{ game["character_turn"] }}</p>
@@ -61,6 +61,12 @@
             <img src="/static/images/districts/{{pic}}" alt="{{ pic }}" class="cards-img" title="{{ pic }}"/>
             {% endfor %}
         </div>
+        {% endif %}
+
+        {% if game["log"] %}
+        <div class="vertical-line"></div>
+
+        <textarea class="scrollabletextbox">{{ game["log"] }}</textarea>
         {% endif %}
     </div>
 

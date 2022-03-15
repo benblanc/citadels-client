@@ -12,7 +12,6 @@ td, th {
   text-align: left;
   padding: 8px;
 }
-
 tr:nth-child(even) {
   background-color: #dddddd;
 }
@@ -27,9 +26,7 @@ tr:nth-child(even) {
 }
 .game-display {
   display: flex;
-  background-color: lightpink;
-}
-.game-display-properties {
+  justify-content: space-between;
   background-color: lightpink;
 }
 .player-display {
@@ -40,7 +37,6 @@ tr:nth-child(even) {
 }
 .cards-display {
   height: 195px;
-  background-color: lightgreen;
   margin: 1em;
 }
 .cards-img {
@@ -160,4 +156,9 @@ tr:nth-child(even) {
 }
 .game-buttons:hover {
   opacity: 1;
+}
+.scrollabletextbox {
+  width:500px;
+  font-size: 82%;
+  overflow:scroll;
 }
