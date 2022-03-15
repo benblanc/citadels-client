@@ -43,9 +43,8 @@ def get_game(game_uuid):
     return response
 
 
-def create_game(name, description):
+def create_game(description):
     payload = {
-        "name": name,
         "description": description
     }
 

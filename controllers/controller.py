@@ -42,8 +42,6 @@ def create_game_run():
     player_name = request.values.get('player-name')
     game_description = request.values.get('game-description')
 
-    game_name = "name_will_be_removed"
-
     if not player_name or not game_description:  # check if not none
         return redirect("/")
 
@@ -51,7 +49,7 @@ def create_game_run():
         return redirect("/")
 
     if request.method == 'POST':
-        response_create_game = create_game(game_name, game_description)
+        response_create_game = create_game(game_description)
 
         if not is_request_successful(response_create_game.status_code):
             return redirect("/")
