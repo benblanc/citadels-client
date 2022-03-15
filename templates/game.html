@@ -22,6 +22,17 @@
             </form>
             {% endif %}
 
+            {% if not host and game["state"] == "created" %}
+            <p>Waiting for other players to join...</p>
+            {% endif %}
+
+            {% if game["state"] in ["selection_phase", "turn_phase"] %}
+            <ul>
+                <li><a href="https://www.fgbradleys.com/rules/rules2/Citadels-rules.pdf" target="_blank">Rules</a></li>
+                <li><a href="https://images-cdn.fantasyflightgames.com/ffg_content/Citadels/support/citadels-faq.pdf" target="_blank">FAQ / rulings</a></li>
+            </ul>
+            {% endif %}
+
             {% if game["state"] == "finished" %}
             <p><strong>The winners are</strong>:</p>
             <ul>
@@ -29,11 +40,6 @@
                 <li>{{ name }} with a score of {{ highest_score }}</li>
                 {% endfor %}
             </ul>
-
-            {% endif %}
-
-            {% if not host and game["state"] == "created" %}
-            <p>Waiting for other players to join...</p>
             {% endif %}
         </div>
 
@@ -78,7 +84,7 @@
                 <p>Pick a character for this round:</p>
                 <select name="character-name">
                     {% for character in game['possible_characters'] %}
-                    <option value="{{ character['name'] }}">{{ character['name'] }}</option>
+                    <option value="{{ character['name'] }}">{{ character['order'] }} - {{ character['name'] }}</option>
                     {% endfor %}
                 </select>
 
@@ -86,7 +92,7 @@
                 <p>Pick a character to remove for this round:</p>
                 <select name="character-remove">
                     {% for character in game['possible_characters'] %}
-                    <option value="{{ character['name'] }}">{{ character['name'] }}</option>
+                    <option value="{{ character['name'] }}">{{ character['order'] }} - {{ character['name'] }}</option>
                     {% endfor %}
                 </select>
                 {% endif %}
@@ -146,7 +152,9 @@
                 <p>On which character do you want to use your ability?</p>
                 <select name="character-name">
                     {% for character in possible_characters_to_assassinate_or_rob %}
-                    <option value="{{ character['name'] }}">{{ character['name'] }}</option>
+                    {% if character['name'] not in player_characters %}
+                    <option value="{{ character['name'] }}">{{ character['order'] }} - {{ character['name'] }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
                 {% endif %}

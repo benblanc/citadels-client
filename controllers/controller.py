@@ -235,6 +235,7 @@ def game_player_run(game_uuid, player_uuid):
     players = None
     host = False
     player_uuid_select_expected = None
+    player_characters = []
     player_drawn_card_names = []
     player_drawn_card_pics = []
     player_buildings = None
@@ -366,6 +367,9 @@ def game_player_run(game_uuid, player_uuid):
 
                     player["current_character"] = filter_on("name", game["character_turn"], characters)
 
+                    if player["uuid"] == player_uuid:
+                        player_characters = list(map(lambda character: character["name"], characters))
+
                     if characters_full_info:  # check if we have the full info on each character in the game
                         for character in characters:
                             character["order"] = filter_on("name", character["name"], characters_full_info)["order"]
@@ -434,4 +438,4 @@ def game_player_run(game_uuid, player_uuid):
                            player_uuid_select_expected=player_uuid_select_expected, amount_removed_characters=len(game["removed_characters"]),
                            player_drawn_card_pics=player_drawn_card_pics, player_buildings=str(player_buildings), building_limit=building_limit,
                            characters_secondary_ability=characters_secondary_ability, possible_characters_to_assassinate_or_rob=possible_characters_to_assassinate_or_rob,
-                           highest_score=highest_score, winners=winners, player_drawn_card_names=player_drawn_card_names)
+                           highest_score=highest_score, winners=winners, player_drawn_card_names=player_drawn_card_names, player_characters=player_characters)
