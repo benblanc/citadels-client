@@ -7,9 +7,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+<div>
+    <p>{{ game["character_turn"] }}</p>
+    <p>{{ player_characters }}</p>
+    <p>{{ player_uuid_select_expected }}</p>
+    <p>{{ player_uuid }}</p>
+</div>
 <div class="game-general">
     <div class="game-display">
-        <div class="game-display-properties">
+        <div>
             <p><strong>Round</strong>: {{ game["round"] }}</p>
             <p><strong>State</strong>: {{ game["state"] }}</p>
             <p><strong>Character turn</strong>: {{ game["character_turn"] }}</p>
@@ -61,6 +67,12 @@
             <img src="/static/images/districts/{{pic}}" alt="{{ pic }}" class="cards-img" title="{{ pic }}"/>
             {% endfor %}
         </div>
+        {% endif %}
+
+        {% if game["log"] %}
+        <div class="vertical-line"></div>
+
+        <textarea class="scrollabletextbox" id="game_log">{{ game["log"] }}</textarea>
         {% endif %}
     </div>
 
@@ -236,5 +248,6 @@
 
     {% endfor %}
 </div>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 </html>
