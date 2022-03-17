@@ -163,3 +163,6 @@ tr:nth-child(even) {
   overflow:scroll;
   resize: none;
 }
+.player-color {
+  background-color: lightgreen;
+}
