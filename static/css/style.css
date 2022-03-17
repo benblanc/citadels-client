@@ -158,7 +158,8 @@ tr:nth-child(even) {
   opacity: 1;
 }
 .scrollabletextbox {
-  width:500px;
-  font-size: 82%;
+  width:720px;
+  font-size: 100%;
   overflow:scroll;
+  resize: none;
 }
