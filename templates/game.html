@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="10">
+    {% if game["state"] == "created" or
+    game["state"] == "selection_phase" and player_uuid_select_expected and player_uuid_select_expected != player_uuid or
+    game["state"] == "turn_phase" and game["character_turn"] and not game["character_turn"] in player_characters %}
+    <meta http-equiv="refresh" content="5">
+    {% endif %}
     <title>Game</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -78,7 +82,7 @@
 
     {% for player in players %}
     <hr>
-    <div class="player-display">
+    <div class="player-display {{ 'player-color' if player_uuid == player['uuid'] }}">
         <div class="player-display-properties">
             <p><strong>Seat</strong>: {{ player["seat"] }}</p>
             <p><strong>Score</strong>: {{ player["score"] }}</p>
