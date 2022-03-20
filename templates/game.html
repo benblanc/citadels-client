@@ -132,6 +132,16 @@
                     <option value="{{ name }}">{{ name }}</option>
                     {% endfor %}
                 </select>
+
+                {% if "library" in player_buildings %}
+                <p>You can keep an extra card:</p>
+                <select name="card-keep-extra">
+                    {% for name in player_drawn_card_names %}
+                    <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+
                 <button type="submit">Keep</button>
             </form>
             {% endif %}

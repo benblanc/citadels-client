@@ -181,9 +181,9 @@ def get_drawn_cards(game_uuid, player_uuid):
     return response
 
 
-def keep_card(game_uuid, player_uuid, name):
+def keep_card(game_uuid, player_uuid, names):
     payload = {
-        "name": name
+        "names": names
     }
 
     response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.keep_card", json=payload)
