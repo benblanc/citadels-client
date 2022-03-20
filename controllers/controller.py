@@ -125,6 +125,8 @@ def receive_income_run(game_uuid, player_uuid):
 
 def keep_card_run(game_uuid, player_uuid):
     card_keep = request.values.get('card-keep')
+    card_keep_extra = request.values.get('card-keep-extra')
+    cards_to_keep = []
 
     if not card_keep:  # check if not none
         return redirect("/game/" + game_uuid + "/" + player_uuid)
@@ -132,8 +134,16 @@ def keep_card_run(game_uuid, player_uuid):
     if not validate_card_name(card_keep):  # check if invalid input
         return redirect("/game/" + game_uuid + "/" + player_uuid)
 
+    if card_keep_extra:  # check if not none
+        if not validate_card_name(card_keep_extra):  # check if invalid input
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+        cards_to_keep.append(card_keep_extra)  # add to list
+
+    cards_to_keep.append(card_keep)  # add to list
+
     if request.method == 'POST':
-        keep_card(game_uuid, player_uuid, card_keep)
+        keep_card(game_uuid, player_uuid, cards_to_keep)
 
     return redirect("/game/" + game_uuid + "/" + player_uuid)
 
