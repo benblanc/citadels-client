@@ -118,7 +118,21 @@
                 <p>Receive income:</p>
                 <select name="income-type">
                     <option value="coins">2 coins</option>
+                    {% if not "library" in player_buildings and not "observatory" in player_buildings %}
                     <option value="cards">2 cards and keep 1</option>
+                    {% endif %}
+
+                    {% if not "library" in player_buildings and "observatory" in player_buildings %}
+                    <option value="cards">3 cards and keep 1</option>
+                    {% endif %}
+
+                    {% if "library" in player_buildings and not "observatory" in player_buildings %}
+                    <option value="cards">2 cards and keep 2</option>
+                    {% endif %}
+
+                    {% if "library" in player_buildings and "observatory" in player_buildings %}
+                    <option value="cards">3 cards and keep 2</option>
+                    {% endif %}
                 </select>
                 <button type="submit">Receive</button>
             </form>
