@@ -22,6 +22,10 @@ def string_to_bool(text):
     return status
 
 
+def string_to_list(text):
+    return list(text.strip("]['").split(', '))
+
+
 def get_citadels_api_base_url():
     return os.environ["CITADELS_API_BASE_URL"]
 
