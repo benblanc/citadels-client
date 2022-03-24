@@ -222,6 +222,18 @@ def use_ability(game_uuid, player_uuid, main=False, character_name="", district_
     return response
 
 
+def use_building_ability(game_uuid, player_uuid, name, target_name=""):
+    payload = {
+        "name": target_name
+    }
+
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/buildings/" + name + "/action.use_ability", json=payload)
+
+    log_response(response)
+
+    return response
+
+
 def end_turn(game_uuid, player_uuid):
     response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.end_turn")
 

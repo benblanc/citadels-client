@@ -54,7 +54,7 @@ def keep_card(game_uuid, player_uuid):
 
 @app.route("/build_district/<string:game_uuid>/<string:player_uuid>/<string:player_buildings>", methods=['POST'])
 def build_district(game_uuid, player_uuid, player_buildings):
-    return build_district_run(game_uuid, player_uuid, list(player_buildings))
+    return build_district_run(game_uuid, player_uuid, string_to_list(player_buildings))
 
 
 @app.route("/use_main_character_ability/<string:game_uuid>/<string:player_uuid>/<string:current_character>", methods=['POST'])
@@ -65,6 +65,11 @@ def use_main_character_ability(game_uuid, player_uuid, current_character):
 @app.route("/use_secondary_character_ability/<string:game_uuid>/<string:player_uuid>", methods=['POST'])
 def use_secondary_character_ability(game_uuid, player_uuid):
     return use_secondary_character_ability_run(game_uuid, player_uuid)
+
+
+@app.route("/use_district_ability/<string:game_uuid>/<string:player_uuid>/<string:district>/<string:player_buildings>", methods=['POST'])
+def use_district_ability(game_uuid, player_uuid, district, player_buildings):
+    return use_district_ability_run(game_uuid, player_uuid, district, string_to_list(player_buildings))
 
 
 @app.route("/end_turn/<string:game_uuid>/<string:player_uuid>", methods=['POST'])

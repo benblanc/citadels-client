@@ -228,7 +228,6 @@
                 <div>
                     <button type="submit">Use main ability</button>
                 </div>
-
             </form>
             {% endif %}
 
@@ -238,7 +237,13 @@
                 <button type="submit">Use second ability</button>
             </form>
             {% endif %}
+            {% endif %}
 
+            {% if "smithy" in player_buildings and not smithy_ability_used %}
+            <form action="{{ url_for('use_district_ability', game_uuid=game['uuid'], player_uuid=player_uuid, district='smithy', player_buildings=player_buildings) }}" method="post">
+                <p>Do you want to pay 3 coins to draw 2 cards?</p>
+                <button type="submit">Use smithy</button>
+            </form>
             {% endif %}
         </div>
 
