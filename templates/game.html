@@ -237,13 +237,26 @@
                 <button type="submit">Use second ability</button>
             </form>
             {% endif %}
-            {% endif %}
 
             {% if "smithy" in player_buildings and not smithy_ability_used %}
             <form action="{{ url_for('use_district_ability', game_uuid=game['uuid'], player_uuid=player_uuid, district='smithy', player_buildings=player_buildings) }}" method="post">
                 <p>Do you want to pay 3 coins to draw 2 cards?</p>
                 <button type="submit">Use smithy</button>
             </form>
+            {% endif %}
+
+            {% if "laboratory" in player_buildings and not laboratory_ability_used %}
+            <form action="{{ url_for('use_district_ability', game_uuid=game['uuid'], player_uuid=player_uuid, district='laboratory', player_buildings=player_buildings) }}" method="post">
+                <p>Do you want to discard a card to receive one coin?</p>
+                <select name="district-hand">
+                    {% for card in player["cards"] %}
+                    <option value="{{ card['name'] }}">{{ card['name'] }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Use laboratory</button>
+            </form>
+            {% endif %}
+
             {% endif %}
         </div>
 

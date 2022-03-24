@@ -23,7 +23,12 @@ def string_to_bool(text):
 
 
 def string_to_list(text):
-    return list(text.strip("]['").split(', '))
+    characters = "[]'"
+
+    for character in characters:
+        text = text.replace(character, "")
+
+    return list(text.split(', '))
 
 
 def get_citadels_api_base_url():
