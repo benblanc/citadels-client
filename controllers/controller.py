@@ -232,6 +232,8 @@ def use_secondary_character_ability_run(game_uuid, player_uuid):
 
 
 def use_district_ability_run(game_uuid, player_uuid, district, player_buildings):
+    target_name = ""
+
     if not district:  # check if not none
         return redirect("/game/" + game_uuid + "/" + player_uuid)
 
@@ -241,8 +243,17 @@ def use_district_ability_run(game_uuid, player_uuid, district, player_buildings)
     if not district in player_buildings:
         return redirect("/game/" + game_uuid + "/" + player_uuid)
 
+    if district == "laboratory":
+        target_name = request.values.get('district-hand')
+
+        if not target_name:  # check if not none
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
+        if not validate_card_name(target_name):  # check if invalid input
+            return redirect("/game/" + game_uuid + "/" + player_uuid)
+
     if request.method == 'POST':
-        use_building_ability(game_uuid, player_uuid, district)
+        use_building_ability(game_uuid, player_uuid, district, target_name)
 
     return redirect("/game/" + game_uuid + "/" + player_uuid)
 
@@ -264,6 +275,7 @@ def game_player_run(game_uuid, player_uuid):
     player_drawn_card_pics = []
     player_buildings = None
     smithy_ability_used = False
+    laboratory_ability_used = False
     building_limit = 1
     possible_characters_to_assassinate_or_rob = []
     highest_score = 0
@@ -350,6 +362,12 @@ def game_player_run(game_uuid, player_uuid):
                         if smithy:  # check if player has the smithy
                             if smithy["ability_used"]:  # check if ability is already used
                                 smithy_ability_used = True  # update flag
+
+                        laboratory = filter_on("name", "laboratory", response_buildings.json())  # get laboratory
+
+                        if laboratory:  # check if player has the laboratory
+                            if laboratory["ability_used"]:  # check if ability is already used
+                                laboratory_ability_used = True  # update flag
 
                     response_characters = get_characters()
 
@@ -470,4 +488,4 @@ def game_player_run(game_uuid, player_uuid):
                            player_drawn_card_pics=player_drawn_card_pics, player_buildings=str(player_buildings), building_limit=building_limit,
                            characters_secondary_ability=characters_secondary_ability, possible_characters_to_assassinate_or_rob=possible_characters_to_assassinate_or_rob,
                            highest_score=highest_score, winners=winners, player_drawn_card_names=player_drawn_card_names, player_characters=player_characters,
-                           smithy_ability_used=smithy_ability_used)
+                           smithy_ability_used=smithy_ability_used, laboratory_ability_used=laboratory_ability_used)
