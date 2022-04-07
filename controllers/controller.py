@@ -76,11 +76,11 @@ def start_game_run(game_uuid, player_uuid):
     return redirect("/game/" + game_uuid + "/" + player_uuid)
 
 
-def select_character_run(game_uuid, player_uuid, amount_players, player_king, amount_removed_characters):
+def select_character_run(game_uuid, player_uuid, amount_players, player_crown, amount_removed_characters):
     character_name = request.values.get('character-name')
     character_remove = ""
 
-    if amount_players == 2 and not player_king or amount_players == 2 and amount_removed_characters > 1:  # character only needs to be removed when game has two players and the first player to select (the king) does not discard one
+    if amount_players == 2 and not player_crown or amount_players == 2 and amount_removed_characters > 1:  # character only needs to be removed when game has two players and the first player to select (player with crown) does not discard one
         character_remove = request.values.get('character-remove')
 
         if not character_remove:  # check if not none

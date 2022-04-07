@@ -82,7 +82,7 @@
             <p><strong>Score</strong>: {{ player["score"] }}</p>
             <p><strong>Name</strong>: {{ player["name"] }}</p>
             <p><strong>Coins</strong>: {{ player["coins"] }}</p>
-            <p><strong>Crown</strong>: {{ player["king"] }}</p>
+            <p><strong>Crown</strong>: {{ player["crown"] }}</p>
             <p><strong>Protected</strong>: {{ player["protected"] }}</p>
 
             {% if player_uuid_select_expected == player["uuid"] and player_uuid != player["uuid"] %}
@@ -90,7 +90,7 @@
             {% endif %}
 
             {% if game["state"] == "selection_phase" and player["uuid"] == player_uuid and player["select_expected"] %}
-            <form action="{{ url_for('select_character', game_uuid=game['uuid'], player_uuid=player_uuid, amount_players=game['amount_players'], player_king=player['king'], amount_removed_characters=amount_removed_characters) }}" method="post">
+            <form action="{{ url_for('select_character', game_uuid=game['uuid'], player_uuid=player_uuid, amount_players=game['amount_players'], player_crown=player['crown'], amount_removed_characters=amount_removed_characters) }}" method="post">
                 <p>Pick a character for this round:</p>
                 <select name="character-name">
                     {% for character in game['possible_characters'] %}
@@ -98,7 +98,7 @@
                     {% endfor %}
                 </select>
 
-                {% if game["amount_players"] == 2 and not player['king'] or game["amount_players"] == 2 and amount_removed_characters > 1 %}
+                {% if game["amount_players"] == 2 and not player['crown'] or game["amount_players"] == 2 and amount_removed_characters > 1 %}
                 <p>Pick a character to remove for this round:</p>
                 <select name="character-remove">
                     {% for character in game['possible_characters'] %}
