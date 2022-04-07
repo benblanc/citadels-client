@@ -88,3 +88,6 @@ if __name__ == '__main__':
 
     except Exception:
         logging.error(traceback.format_exc())
+
+# TODO: add page to display all characters in game with info and put link in game page
+# TODO: add page to display all districts in game with info and put link in game page
