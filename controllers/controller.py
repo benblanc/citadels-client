@@ -114,8 +114,8 @@ def receive_income_run(game_uuid, player_uuid):
         return redirect("/game/" + game_uuid + "/" + player_uuid)
 
     if request.method == 'POST':
-        if income_type == "coins":
-            receive_coins(game_uuid, player_uuid)
+        if income_type == "gold":
+            receive_gold(game_uuid, player_uuid)
 
         elif income_type == "cards":
             draw_cards(game_uuid, player_uuid)

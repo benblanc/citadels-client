@@ -157,8 +157,8 @@ def select_character(game_uuid, player_uuid, name, remove):
     return response
 
 
-def receive_coins(game_uuid, player_uuid):
-    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.receive_coins")
+def receive_gold(game_uuid, player_uuid):
+    response = requests.post(url=get_citadels_api_base_url() + "/game/" + game_uuid + "/players/" + player_uuid + "/action.receive_gold")
 
     log_response(response)
 

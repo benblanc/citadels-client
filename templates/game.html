@@ -81,7 +81,7 @@
             <p><strong>Seat</strong>: {{ player["seat"] }}</p>
             <p><strong>Score</strong>: {{ player["score"] }}</p>
             <p><strong>Name</strong>: {{ player["name"] }}</p>
-            <p><strong>Coins</strong>: {{ player["coins"] }}</p>
+            <p><strong>Gold</strong>: {{ player["gold"] }}</p>
             <p><strong>Crown</strong>: {{ player["crown"] }}</p>
             <p><strong>Protected</strong>: {{ player["protected"] }}</p>
 
@@ -117,7 +117,7 @@
             <form action="{{ url_for('receive_income', game_uuid=game['uuid'], player_uuid=player_uuid) }}" method="post">
                 <p>Receive income:</p>
                 <select name="income-type">
-                    <option value="coins">2 coins</option>
+                    <option value="gold">2 gold</option>
                     {% if not "library" in player_buildings and not "observatory" in player_buildings %}
                     <option value="cards">2 cards and keep 1</option>
                     {% endif %}
@@ -240,7 +240,7 @@
 
             {% if "smithy" in player_buildings and not smithy_ability_used %}
             <form action="{{ url_for('use_district_ability', game_uuid=game['uuid'], player_uuid=player_uuid, district='smithy', player_buildings=player_buildings) }}" method="post">
-                <p>Do you want to pay 3 coins to draw 2 cards?</p>
+                <p>Do you want to pay 3 gold to draw 2 cards?</p>
                 <button type="submit">Use smithy</button>
             </form>
             {% endif %}

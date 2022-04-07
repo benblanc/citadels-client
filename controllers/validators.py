@@ -29,7 +29,7 @@ def validate_card_names(names):
 
 def validate_income_type(income):
     response = False
-    options = ["coins", "cards"]
+    options = ["gold", "cards"]
 
     if income in options:
         response = True
